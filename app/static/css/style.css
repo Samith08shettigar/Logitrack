@@ -672,6 +672,18 @@ img, .responsive-img {
     cursor: pointer;
 }
 
+/* Route Origin/Destination City Landmark Images */
+.city-img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    max-height: 240px;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 14px;
+    display: block;
+}
+
 /* ==========================================================================
    10. Tracking Map & Route Sidebars (Laptop vs Mobile Adaptations)
    ========================================================================== */
