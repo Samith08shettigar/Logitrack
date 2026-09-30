@@ -1,18 +1,22 @@
 {% extends "base.html" %}
 
 {% block public_content %}
-<div class="auth-bg py-5">
-    <div class="container">
+<div class="auth-bg py-5 position-relative overflow-hidden">
+    <div class="genz-glow-orb-1"></div>
+    <div class="genz-glow-orb-2"></div>
+    <div class="container position-relative" style="z-index: 2;">
         <div class="row justify-content-center align-items-center" style="min-height: 80vh;">
-            <div class="col-md-5">
+            <div class="col-md-6 col-lg-5">
                 <div class="text-center text-white mb-4">
-                    <i class="fa-solid fa-truck-ramp-box fa-3x mb-3 text-warning"></i>
-                    <h2 class="fw-bold">Create Customer Account</h2>
-                    <p class="text-white-50">Join LogiTrack for instant package booking and real-time tracking</p>
+                    <div class="d-inline-flex p-3 rounded-circle bg-warning bg-opacity-15 text-warning mb-3 shadow-lg" style="border: 1px solid rgba(245, 158, 11, 0.3);">
+                        <i class="fa-solid fa-user-plus fa-2x"></i>
+                    </div>
+                    <h2 class="fw-bold font-brand mb-1">Create Customer Account</h2>
+                    <p class="text-white-50 small">Join LogiTrack for instant package booking & live tracking</p>
                 </div>
 
-                <div class="card border-0 glass-card">
-                    <div class="card-body p-4">
+                <div class="card border-0 glass-card shadow-lg" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.15) !important;">
+                    <div class="card-body p-4 p-sm-5">
                         <form method="POST" action="{{ url_for('auth.register') }}">
                             <div class="mb-3">
                                 <label class="form-label small fw-bold">Username</label>
@@ -20,7 +24,7 @@
                                     <span class="input-group-text bg-light border-end-0"><i
                                             class="fa-solid fa-user text-muted"></i></span>
                                     <input type="text" name="username" class="form-control bg-light border-start-0"
-                                        placeholder="Choose a username" required>
+                                        placeholder="Choose a username" required autocomplete="username">
                                 </div>
                             </div>
 
@@ -32,7 +36,7 @@
                                     <input type="email" name="email" class="form-control bg-light border-start-0"
                                         placeholder="Enter your email (@gmail.com)"
                                         pattern="[a-zA-Z0-9._%+-]+@(gmail\.com|logitrack\.com)"
-                                        title="Email domain must be @gmail.com" required>
+                                        title="Email domain must be @gmail.com" required autocomplete="email">
                                 </div>
                             </div>
 
@@ -43,7 +47,7 @@
                                             class="fa-solid fa-phone text-muted"></i></span>
                                     <input type="text" name="phone" class="form-control bg-light border-start-0"
                                         placeholder="Enter 10-digit phone number" pattern="[0-9]{10}" maxlength="10"
-                                        title="Phone number must contain exactly 10 digits (0-9)" required>
+                                        title="Phone number must contain exactly 10 digits (0-9)" required autocomplete="tel">
                                 </div>
                             </div>
 
@@ -56,7 +60,7 @@
                                         placeholder="Choose a strong password" minlength="4"
                                         pattern="(?=.*\d)(?=.*[^a-zA-Z0-9\s]).{4,}"
                                         title="Password must be at least 4 characters and contain at least 1 digit and 1 special character"
-                                        required>
+                                        required autocomplete="new-password">
                                     <button class="btn btn-light bg-light border border-start-0 text-muted" type="button" onclick="togglePasswordVisibility('reg_password', 'reg_eye_icon')" title="Show / Hide Password">
                                         <i class="fa-solid fa-eye" id="reg_eye_icon"></i>
                                     </button>
@@ -70,21 +74,21 @@
                                             class="fa-solid fa-key text-muted"></i></span>
                                     <input type="password" name="confirm_password" id="reg_confirm_password"
                                         class="form-control bg-light border-start-0 border-end-0" placeholder="Confirm your password"
-                                        minlength="4" required>
+                                        minlength="4" required autocomplete="new-password">
                                     <button class="btn btn-light bg-light border border-start-0 text-muted" type="button" onclick="togglePasswordVisibility('reg_confirm_password', 'reg_confirm_eye_icon')" title="Show / Hide Password">
                                         <i class="fa-solid fa-eye" id="reg_confirm_eye_icon"></i>
                                     </button>
                                 </div>
                             </div>
 
-                            <button type="submit" class="btn btn-warning w-100 py-2 fw-bold text-dark"><i
-                                    class="fa-solid fa-user-plus me-2"></i>Register Account</button>
+                            <button type="submit" class="btn btn-warning w-100 py-2 fw-bold text-dark shadow-sm" style="border-radius: 12px;"><i
+                                    class="fa-solid fa-rocket me-2"></i>Register Customer Account</button>
                         </form>
 
                         <div class="text-center mt-4 border-top pt-3">
                             <span class="small text-muted">Already have an account? <a
                                     href="{{ url_for('auth.login') }}"
-                                    class="fw-bold text-decoration-none text-primary">Login here</a></span>
+                                    class="fw-bold text-decoration-none text-primary ms-1">Login here &rarr;</a></span>
                         </div>
                     </div>
                 </div>

@@ -321,33 +321,123 @@
 
     {% else %}
     <!-- Public Header & Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3 sticky-top public-navbar shadow-sm">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center fw-bold font-brand" href="/">
-                <i class="fa-solid fa-truck-ramp-box fa-lg me-2 text-warning"></i> LogiTrack
-            </a>
-            <!-- Standard Mobile Navbar Toggler (min 44px) -->
-            <button class="navbar-toggler border-0 shadow-none p-2" type="button" data-bs-toggle="collapse" data-bs-target="#public-nav" aria-controls="public-nav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="public-nav">
-                <ul class="navbar-nav ms-auto gap-2 mt-3 mt-lg-0 align-items-lg-center">
-                    <li class="nav-item">
-                        <a class="nav-link py-2 px-3 rounded hover-bg" href="/"><i class="fa-solid fa-house me-1"></i> Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link py-2 px-3 rounded hover-bg" href="{{ url_for('customer.public_track') }}"><i class="fa-solid fa-magnifying-glass-location me-1"></i> Track Parcel</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="btn btn-outline-warning text-white btn-sm px-3 w-100 w-lg-auto my-1 my-lg-0" href="{{ url_for('auth.login') }}"><i class="fa-solid fa-right-to-bracket me-1"></i> Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="btn btn-warning btn-sm px-3 w-100 w-lg-auto fw-bold text-dark my-1 my-lg-0" href="{{ url_for('auth.register') }}"><i class="fa-solid fa-user-plus me-1"></i> Signup</a>
-                    </li>
-                </ul>
+    <header class="sticky-top">
+        <nav class="navbar navbar-expand-lg navbar-dark public-navbar py-2 py-lg-3 shadow-sm">
+            <div class="container">
+                <!-- Brand Logo -->
+                <a class="navbar-brand d-flex align-items-center fw-bold font-brand" href="/">
+                    <div class="p-1 rounded-circle me-2 bg-warning bg-opacity-10 d-flex align-items-center justify-content-center" style="width: 34px; height: 34px;">
+                        <i class="fa-solid fa-truck-ramp-box text-warning"></i>
+                    </div>
+                    <span>LogiTrack</span>
+                    <span class="badge bg-warning bg-opacity-25 text-warning font-monospace ms-2 d-none d-sm-inline" style="font-size: 0.65rem;">v2.4</span>
+                </a>
+
+                <!-- Mobile Header Right Actions (Visible only on < 992px) -->
+                <div class="d-flex align-items-center gap-2 d-lg-none">
+                    <a href="{{ url_for('auth.login') }}" class="btn-glass-pill py-1 px-3">
+                        <i class="fa-solid fa-right-to-bracket text-warning"></i>
+                        <span>Sign In</span>
+                    </a>
+                    <button class="btn btn-outline-light border-0 p-2 d-flex align-items-center justify-content-center" type="button" data-bs-toggle="offcanvas" data-bs-target="#publicMobileOffcanvas" aria-controls="publicMobileOffcanvas" aria-label="Open Navigation Menu" style="min-width: 44px; min-height: 44px; border-radius: 10px; background: rgba(255,255,255,0.08);">
+                        <i class="fa-solid fa-bars-staggered fs-5"></i>
+                    </button>
+                </div>
+
+                <!-- Desktop Navigation Menu (Visible only on >= 992px) -->
+                <div class="collapse navbar-collapse d-none d-lg-block" id="public-nav-desktop">
+                    <ul class="navbar-nav ms-auto gap-2 align-items-center">
+                        <li class="nav-item">
+                            <a class="nav-link py-2 px-3 rounded" href="/"><i class="fa-solid fa-house me-1"></i> Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link py-2 px-3 rounded" href="{{ url_for('customer.public_track') }}"><i class="fa-solid fa-magnifying-glass-location me-1"></i> Track Parcel</a>
+                        </li>
+                        <li class="nav-item ms-2">
+                            <a class="btn btn-outline-warning text-white btn-sm px-3" href="{{ url_for('auth.login') }}"><i class="fa-solid fa-right-to-bracket me-1"></i> Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-warning btn-sm px-3 fw-bold text-dark" href="{{ url_for('auth.register') }}"><i class="fa-solid fa-user-plus me-1"></i> Signup</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Public Mobile Offcanvas Menu (Modern Glass Drawer) -->
+    <div class="offcanvas offcanvas-end public-mobile-sheet" tabindex="-1" id="publicMobileOffcanvas" aria-labelledby="publicMobileOffcanvasLabel">
+        <div class="offcanvas-header border-bottom border-white border-opacity-10 py-3">
+            <div class="d-flex align-items-center gap-2">
+                <i class="fa-solid fa-truck-ramp-box text-warning fs-5"></i>
+                <h5 class="offcanvas-title fw-bold text-white mb-0 font-brand" id="publicMobileOffcanvasLabel">LogiTrack</h5>
+            </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column justify-content-between p-3">
+            <div>
+                <!-- Live Network Status Pill -->
+                <div class="p-2 mb-3 rounded-3 bg-white bg-opacity-5 border border-white border-opacity-10 d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="pulse-dot"></span>
+                        <small class="text-white-50 fw-bold" style="font-size: 0.72rem;">LOGISTICS NETWORK</small>
+                    </div>
+                    <span class="badge bg-success bg-opacity-25 text-success" style="font-size: 0.68rem;">ONLINE</span>
+                </div>
+
+                <!-- Navigation Tiles -->
+                <div class="mb-4">
+                    <a href="/" class="nav-tile" data-bs-dismiss="offcanvas">
+                        <div class="nav-tile-icon bg-primary bg-opacity-25 text-primary">
+                            <i class="fa-solid fa-house"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold small text-white">Home Hub</div>
+                            <small class="text-white-50" style="font-size: 0.72rem;">LogiTrack express overview</small>
+                        </div>
+                    </a>
+
+                    <a href="{{ url_for('customer.public_track') }}" class="nav-tile" data-bs-dismiss="offcanvas">
+                        <div class="nav-tile-icon bg-warning bg-opacity-25 text-warning">
+                            <i class="fa-solid fa-magnifying-glass-location"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold small text-white">Track Parcel</div>
+                            <small class="text-white-50" style="font-size: 0.72rem;">Real-time GPS telemetry & status</small>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Access Portals Group -->
+                <div class="mb-3">
+                    <span class="text-white-50 small fw-bold d-block mb-2 px-1" style="font-size: 0.72rem; letter-spacing: 0.5px;">ACCOUNT ACCESS</span>
+                    <a href="{{ url_for('auth.login') }}" class="nav-tile mb-2" data-bs-dismiss="offcanvas">
+                        <div class="nav-tile-icon bg-info bg-opacity-25 text-info">
+                            <i class="fa-solid fa-circle-user"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="fw-bold small text-white">Client & Staff Sign In</div>
+                            <small class="text-white-50" style="font-size: 0.72rem;">Access your dashboard</small>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-white-50 small"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Bottom Action CTA Buttons -->
+            <div class="pt-3 border-top border-white border-opacity-10">
+                <a href="{{ url_for('auth.register') }}" class="btn-gradient-pill w-100 py-2 mb-2 justify-content-center shadow-lg" data-bs-dismiss="offcanvas">
+                    <i class="fa-solid fa-rocket me-1"></i> Create Free Account
+                </a>
+                <a href="{{ url_for('auth.login') }}" class="btn-glass-pill w-100 py-2 justify-content-center" data-bs-dismiss="offcanvas">
+                    <i class="fa-solid fa-right-to-bracket text-warning me-1"></i> Existing User Login
+                </a>
+                <div class="text-center mt-3">
+                    <small class="text-white-50" style="font-size: 0.68rem;">LogiTrack Next-Gen Logistics &copy; 2026</small>
+                </div>
             </div>
         </div>
-    </nav>
+    </div>
 
     <!-- Public Main Container -->
     <main class="flex-shrink-0">

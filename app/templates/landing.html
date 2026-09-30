@@ -128,79 +128,209 @@
     </button>
 </div>
 
-<!-- Hero Banner Segment -->
-<div class="bg-primary text-white py-5 position-relative" style="background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-light) 100%) !important;">
-    <div class="container py-5 text-center text-lg-start">
-        <div class="row align-items-center g-5">
+<!-- Next-Gen Dynamic Hero Banner Segment -->
+<div class="genz-hero-section text-white position-relative">
+    <div class="genz-glow-orb-1"></div>
+    <div class="genz-glow-orb-2"></div>
+    
+    <div class="container genz-hero-content text-center text-lg-start">
+        <div class="row align-items-center g-4 g-lg-5">
             <div class="col-lg-7">
-                <h1 class="display-4 fw-extrabold mb-3 text-warning">LogiTrack Logistics Solutions</h1>
-                <p class="lead mb-4">Fast, secure, and smart logistics and delivery management systems for modern supply chains. Track, manage, and book shipments effortlessly.</p>
+                <!-- Glowing Live Tag Badge -->
+                <div class="d-inline-block mb-3">
+                    <div class="genz-hero-tag">
+                        <span class="pulse-dot"></span>
+                        <span>Next-Gen Autonomous Logistics</span>
+                        <span class="badge bg-warning text-dark ms-1 font-monospace">v2.4</span>
+                    </div>
+                </div>
+
+                <!-- High-Impact Creative Typography -->
+                <h1 class="genz-hero-title">
+                    Move Fast.<br>
+                    <span class="genz-gradient-text">Ship Smarter.</span><br>
+                    <span class="genz-highlight-text">Track In Real-Time.</span>
+                </h1>
+
+                <p class="genz-hero-sub mb-4">
+                    Frictionless express deliveries, instant QR checkpoints, and automated container routing engineered for modern commerce and supply chains.
+                </p>
                 
-                <!-- Tracking Form -->
-                <div class="card p-3 shadow-lg border-0 bg-white text-dark" style="border-radius: 12px;">
-                    <form action="{{ url_for('customer.public_track') }}" method="GET" class="row g-2">
-                        <div class="col-md-8">
-                            <div class="input-group">
-                                <span class="input-group-text bg-light border-0"><i class="fa-solid fa-qrcode text-primary"></i></span>
-                                <input type="text" name="tracking_number" class="form-control border-0 bg-light" placeholder="Enter Cargo Tracking Number (e.g. LT-XXXX)" required>
+                <!-- Next-Gen Glassmorphic Tracking Console -->
+                <div class="genz-track-card mb-3">
+                    <form action="{{ url_for('customer.public_track') }}" method="GET" class="d-flex flex-column flex-sm-row gap-2" id="public-hero-track-form">
+                        <div class="genz-track-input-group flex-grow-1">
+                            <span class="ps-3 text-warning"><i class="fa-solid fa-qrcode fs-5"></i></span>
+                            <input type="text" name="tracking_number" id="hero-tracking-input" class="form-control genz-track-input" placeholder="Enter Tracking Number (e.g. LT-XXXX)" required autocomplete="off">
+                        </div>
+                        <button type="submit" class="genz-track-btn">
+                            <i class="fa-solid fa-bolt-lightning"></i> Track Cargo
+                        </button>
+                    </form>
+
+                    <!-- Interactive Demo Tracking Chips -->
+                    <div class="genz-demo-chips">
+                        <span class="text-white-50" style="font-size: 0.74rem;"><i class="fa-regular fa-lightbulb text-warning me-1"></i>Try Demo:</span>
+                        <button type="button" class="demo-chip-btn" onclick="fillHeroTracking('LT-8821')">LT-8821</button>
+                        <button type="button" class="demo-chip-btn" onclick="fillHeroTracking('LT-9034')">LT-9034</button>
+                        <button type="button" class="demo-chip-btn" onclick="fillHeroTracking('LT-5512')">LT-5512</button>
+                    </div>
+                </div>
+
+                <!-- Floating Live Metrics & Feature Pills -->
+                <div class="row g-2 pt-2 mb-3">
+                    <div class="col-6 col-sm-3">
+                        <div class="genz-stat-pill">
+                            <i class="fa-solid fa-bolt text-warning fs-5"></i>
+                            <div>
+                                <strong class="d-block text-white" style="font-size: 0.85rem;">2.4s</strong>
+                                <small class="text-white-50" style="font-size: 0.65rem;">QR Scans</small>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <button type="submit" class="btn btn-warning w-100 fw-bold text-dark"><i class="fa-solid fa-magnifying-glass-location me-1"></i> Track Cargo</button>
+                    </div>
+                    <div class="col-6 col-sm-3">
+                        <div class="genz-stat-pill">
+                            <i class="fa-solid fa-satellite-dish text-info fs-5"></i>
+                            <div>
+                                <strong class="d-block text-white" style="font-size: 0.85rem;">Live GPS</strong>
+                                <small class="text-white-50" style="font-size: 0.65rem;">Telemetry</small>
+                            </div>
                         </div>
-                    </form>
+                    </div>
+                    <div class="col-6 col-sm-3">
+                        <div class="genz-stat-pill">
+                            <i class="fa-solid fa-shield-halved text-success fs-5"></i>
+                            <div>
+                                <strong class="d-block text-white" style="font-size: 0.85rem;">100%</strong>
+                                <small class="text-white-50" style="font-size: 0.65rem;">Escrow Safety</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-sm-3">
+                        <div class="genz-stat-pill">
+                            <i class="fa-solid fa-truck-fast text-primary fs-5"></i>
+                            <div>
+                                <strong class="d-block text-white" style="font-size: 0.85rem;">99.8%</strong>
+                                <small class="text-white-50" style="font-size: 0.65rem;">On-Time Drop</small>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                
+
                 <!-- Replay Splash Intro Link -->
-                <div class="mt-3 text-center text-lg-start">
+                <div class="text-center text-lg-start pt-1">
                     <a href="#" id="replay-intro-btn" class="text-white-50 text-decoration-none small hover-white">
-                        <i class="fa-solid fa-circle-play me-1"></i> Replay Welcome Animation
+                        <i class="fa-solid fa-circle-play text-warning me-1"></i> Replay Welcome Intro
                     </a>
                 </div>
             </div>
             
-            <div class="col-lg-5 text-center d-none d-lg-block">
-                <i class="fa-solid fa-truck-fast text-warning" style="font-size: 15rem; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));"></i>
+            <!-- Right Visual Interactive Card -->
+            <div class="col-lg-5">
+                <div class="genz-live-widget text-white">
+                    <div class="genz-widget-header">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="pulse-dot"></span>
+                            <span class="fw-bold small font-monospace">LIVE TELEMETRY RADAR</span>
+                        </div>
+                        <span class="badge bg-warning text-dark font-monospace" style="font-size: 0.68rem;">LT-ROUTE #491</span>
+                    </div>
+
+                    <div class="p-3 bg-dark bg-opacity-50 rounded-3 mb-3 border border-white border-opacity-10">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-white-50 small">Consignment</span>
+                            <strong class="text-warning font-monospace">LT-EXPRESS-9921</strong>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-white-50 small">Transit Route</span>
+                            <span class="small fw-semibold">Mumbai Hub &rarr; Bangalore Central</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-white-50 small">Current Checkpoint</span>
+                            <span class="badge bg-success bg-opacity-25 text-success">🟢 In Transit (Highway Node 4)</span>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Visual Progress Flow -->
+                    <div class="d-flex justify-content-between align-items-center text-center px-1 mb-3">
+                        <div>
+                            <div class="p-2 rounded-circle bg-success bg-opacity-25 text-success mx-auto mb-1" style="width: 32px; height: 32px; font-size: 0.75rem; display: flex; align-items: center; justify-content: center;">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <small class="text-white-50 d-block" style="font-size: 0.68rem;">Booked</small>
+                        </div>
+                        <div class="flex-grow-1 bg-success" style="height: 2px;"></div>
+                        <div>
+                            <div class="p-2 rounded-circle bg-success bg-opacity-25 text-success mx-auto mb-1" style="width: 32px; height: 32px; font-size: 0.75rem; display: flex; align-items: center; justify-content: center;">
+                                <i class="fa-solid fa-warehouse"></i>
+                            </div>
+                            <small class="text-white-50 d-block" style="font-size: 0.68rem;">Hub Hub</small>
+                        </div>
+                        <div class="flex-grow-1 bg-warning" style="height: 2px;"></div>
+                        <div>
+                            <div class="p-2 rounded-circle bg-warning text-dark mx-auto mb-1 animate-bounce" style="width: 32px; height: 32px; font-size: 0.75rem; display: flex; align-items: center; justify-content: center;">
+                                <i class="fa-solid fa-truck-moving"></i>
+                            </div>
+                            <small class="text-warning fw-bold d-block" style="font-size: 0.68rem;">Linehaul</small>
+                        </div>
+                        <div class="flex-grow-1 bg-secondary bg-opacity-50" style="height: 2px;"></div>
+                        <div>
+                            <div class="p-2 rounded-circle bg-secondary bg-opacity-25 text-white-50 mx-auto mb-1" style="width: 32px; height: 32px; font-size: 0.75rem; display: flex; align-items: center; justify-content: center;">
+                                <i class="fa-solid fa-house-chimney"></i>
+                            </div>
+                            <small class="text-white-50 d-block" style="font-size: 0.68rem;">Dropoff</small>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center pt-2 border-top border-white border-opacity-10 small">
+                        <span class="text-white-50">Estimated Arrival:</span>
+                        <strong class="text-info"><i class="fa-regular fa-clock me-1"></i>Today, 04:30 PM</strong>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Features Section -->
-<div class="container py-5 mt-4">
+<!-- Modern High-Tech Highlights Section -->
+<div class="container py-5 mt-2">
     <div class="text-center mb-5">
-        <h2 class="fw-bold">Smart System Highlights</h2>
-        <p class="text-muted">High-tech delivery services at your fingertips</p>
+        <div class="d-inline-flex align-items-center gap-2 badge bg-primary bg-opacity-10 text-primary py-2 px-3 rounded-pill mb-2">
+            <i class="fa-solid fa-microchip"></i>
+            <span class="fw-bold">INTELLIGENT INFRASTRUCTURE</span>
+        </div>
+        <h2 class="fw-bold font-brand">Built for Speed, Scaled for Security</h2>
+        <p class="text-muted small">High-tech delivery services and intelligent cargo pipelines at your fingertips</p>
     </div>
     
     <div class="row g-4">
         <div class="col-md-4">
-            <div class="card h-100 p-4 border-0 shadow-sm text-center card-hover-animation" style="border-radius: 16px;">
-                <div class="d-inline-flex bg-primary bg-opacity-10 text-primary p-3 rounded-circle mb-3 mx-auto">
-                    <i class="fa-solid fa-barcode fa-2x"></i>
+            <div class="genz-feature-card h-100">
+                <div class="genz-icon-circle bg-primary bg-opacity-10 text-primary">
+                    <i class="fa-solid fa-barcode"></i>
                 </div>
-                <h4 class="fw-bold">Barcode & QR Codes</h4>
-                <p class="text-muted small">Every package is assigned a unique digital barcode and QR code to allow simple warehouse and courier checklist tracking.</p>
+                <h5 class="fw-bold mb-2">Instant Barcode & QR Engine</h5>
+                <p class="text-muted small mb-0">Every consignment generates cryptographic digital barcodes and QR codes for effortless checkpoint logging and handoff verification.</p>
             </div>
         </div>
         
         <div class="col-md-4">
-            <div class="card h-100 p-4 border-0 shadow-sm text-center card-hover-animation" style="border-radius: 16px;">
-                <div class="d-inline-flex bg-success bg-opacity-10 text-success p-3 rounded-circle mb-3 mx-auto">
-                    <i class="fa-solid fa-shield-halved fa-2x"></i>
+            <div class="genz-feature-card h-100">
+                <div class="genz-icon-circle bg-success bg-opacity-10 text-success">
+                    <i class="fa-solid fa-shield-halved"></i>
                 </div>
-                <h4 class="fw-bold">Secured Accounts</h4>
-                <p class="text-muted small">Role-based user security ensures customers, branch managers, drivers, and administrators access only their respective dashboard layouts.</p>
+                <h5 class="fw-bold mb-2">Role-Based Escrow Security</h5>
+                <p class="text-muted small mb-0">Multi-tier role authentication guarantees customer privacy, driver security, and transparent cash & online settlement workflows.</p>
             </div>
         </div>
         
         <div class="col-md-4">
-            <div class="card h-100 p-4 border-0 shadow-sm text-center card-hover-animation" style="border-radius: 16px;">
-                <div class="d-inline-flex bg-warning bg-opacity-10 text-warning p-3 rounded-circle mb-3 mx-auto">
-                    <i class="fa-solid fa-route fa-2x"></i>
+            <div class="genz-feature-card h-100">
+                <div class="genz-icon-circle bg-warning bg-opacity-10 text-warning">
+                    <i class="fa-solid fa-route"></i>
                 </div>
-                <h4 class="fw-bold">Live Tracking maps</h4>
-                <p class="text-muted small">Watch shipments move across checkpoints from booking confirmation to driver dropoff, using Leaflet routing maps.</p>
+                <h5 class="fw-bold mb-2">Live Interactive Route Mapping</h5>
+                <p class="text-muted small mb-0">Watch shipments move across terminal nodes from pickup confirmation to doorstep completion with real-time Leaflet GIS mapping.</p>
             </div>
         </div>
     </div>
@@ -313,5 +443,22 @@
             });
         }
     })();
+
+    // Demo chip autofill helper
+    function fillHeroTracking(code) {
+        const input = document.getElementById('hero-tracking-input');
+        if (input) {
+            input.value = code;
+            input.focus();
+            const form = document.getElementById('public-hero-track-form');
+            if (form) {
+                // Flash input for delightful visual feedback
+                input.style.boxShadow = '0 0 0 4px rgba(56, 189, 248, 0.4)';
+                setTimeout(() => {
+                    input.style.boxShadow = '';
+                }, 800);
+            }
+        }
+    }
 </script>
 {% endblock %}
