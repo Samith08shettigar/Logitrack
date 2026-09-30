@@ -41,7 +41,7 @@ def dashboard():
     completed_today = Shipment.query.filter(
         Shipment.driver_id == driver.id,
         Shipment.status.in_(['Completed', 'Delivered']),
-        db.func.date(Shipment.updated_at) == datetime.utcnow().date()
+        db.cast(Shipment.updated_at, db.Date) == datetime.utcnow().date()
     ).count()
     
     total_completed = Shipment.query.filter(

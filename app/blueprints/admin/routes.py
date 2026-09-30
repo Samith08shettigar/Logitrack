@@ -29,11 +29,14 @@ def dashboard():
     revenue_sum = db.session.query(func.sum(Payment.amount)).filter(Payment.payment_status == 'Completed').scalar() or 0.0
     
     # 2. Charts Data
-    # Monthly Revenue (Last 6 Months)
+    # Monthly Revenue (Last 6 Months) - Compatible with PostgreSQL and SQLite
+    is_postgres = db.engine.dialect.name == 'postgresql'
+    month_expr = func.to_char(Payment.created_at, 'YYYY-MM') if is_postgres else func.strftime('%Y-%m', Payment.created_at)
+    
     revenue_data = db.session.query(
-        func.strftime('%Y-%m', Payment.created_at).label('month'),
+        month_expr.label('month'),
         func.sum(Payment.amount).label('total')
-    ).filter(Payment.payment_status == 'Completed').group_by('month').order_by('month').all()
+    ).filter(Payment.payment_status == 'Completed').group_by(month_expr).order_by(month_expr).all()
     
     # Shipments by Status
     status_data = db.session.query(
@@ -42,10 +45,11 @@ def dashboard():
     ).group_by(Shipment.status).all()
     
     # Daily Bookings (Last 7 Days)
+    date_expr = func.cast(Shipment.created_at, db.Date)
     bookings_data = db.session.query(
-        func.date(Shipment.created_at).label('date'),
+        date_expr.label('date'),
         func.count(Shipment.id).label('count')
-    ).group_by('date').order_by('date').limit(7).all()
+    ).group_by(date_expr).order_by(date_expr).limit(7).all()
     
     # Recent Activities
     recent_activities = ActivityLog.query.order_by(ActivityLog.created_at.desc()).limit(8).all()

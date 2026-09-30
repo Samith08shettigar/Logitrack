@@ -85,6 +85,7 @@ def create_app(config_name='default'):
 
     with app.app_context():
         try:
+            db.create_all()
             from sqlalchemy import inspect, text
             inspector = inspect(db.engine)
             if 'payments' in inspector.get_table_names():
@@ -94,7 +95,7 @@ def create_app(config_name='default'):
                 if 'cash_collected_amount' not in cols:
                     db.session.execute(text("ALTER TABLE payments ADD COLUMN cash_collected_amount FLOAT DEFAULT 0.0"))
                 if 'cash_handed_over_at' not in cols:
-                    db.session.execute(text("ALTER TABLE payments ADD COLUMN cash_handed_over_at DATETIME"))
+                    db.session.execute(text("ALTER TABLE payments ADD COLUMN cash_handed_over_at TIMESTAMP"))
                 if 'cash_received_by_manager_id' not in cols:
                     db.session.execute(text("ALTER TABLE payments ADD COLUMN cash_received_by_manager_id INTEGER"))
                 if 'collected_by_driver_id' not in cols:

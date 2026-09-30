@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyc
 
 # C extensions
 *.so
@@ -29,19 +30,39 @@ venv/
 .venv/
 ENV/
 env/
+ENV*/
+venv*/
 
-# IDE files
+# Environment Variables & Secrets
+.env
+.env.local
+.env.*.local
+*.env
+!.env.example
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+app/logitrack.db
+instance/
+
+# IDE & Editor files
 .idea/
 .vscode/
 *.swp
 *.swo
+*.sublime-workspace
+*.sublime-project
 
-# OS specific
+# OS specific files
 .DS_Store
 Thumbs.db
 desktop.ini
 
-# Temporary files & logs
+# Logs & Temporary files
 *.log
 scratch/
-instance/
+.agents/
+.gemini/
+.system_generated/
