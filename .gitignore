@@ -44,8 +44,11 @@ venv*/
 *.db
 *.sqlite
 *.sqlite3
-app/logitrack.db
 instance/
+
+# Explicitly track and preserve the migration source backup database for Render
+!app/backup/
+!app/backup/logitrack_backup.db
 
 # IDE & Editor files
 .idea/

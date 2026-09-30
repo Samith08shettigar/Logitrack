@@ -8,7 +8,7 @@ from app.models import (
     Shipment, Payment, Invoice, ContainerTransfer,
     ShipmentHistory, TrackingLog, Setting, Address, Feedback, Notification, ActivityLog
 )
-from migrate_sqlite_to_postgres import ORDERED_TABLES, parse_val_for_column
+from migrate_sqlite_to_postgres import ORDERED_TABLES, parse_val_for_column, find_source_database
 
 class TestMigrationIntegrity(unittest.TestCase):
     def setUp(self):
@@ -32,8 +32,9 @@ class TestMigrationIntegrity(unittest.TestCase):
                 pass
 
     def test_migration_and_data_recovery(self):
-        src_db_path = 'app/logitrack.db'
-        self.assertTrue(os.path.exists(src_db_path), "Source logitrack.db must exist")
+        src_db_path = find_source_database()
+        self.assertIsNotNone(src_db_path, "Source database must be resolved")
+        self.assertTrue(os.path.exists(src_db_path), f"Source database file must exist at {src_db_path}")
         
         src_conn = sqlite3.connect(f'file:{os.path.abspath(src_db_path)}?mode=ro', uri=True)
         src_conn.row_factory = sqlite3.Row

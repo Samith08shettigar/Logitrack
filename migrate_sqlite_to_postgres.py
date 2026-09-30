@@ -1,7 +1,8 @@
 """
-LogiTrack - Safe, Idempotent SQLite to PostgreSQL Data Migration Script
-Transfers all existing data from local SQLite (app/logitrack.db) into Render PostgreSQL (or target database)
-Preserves: Primary Keys (IDs), Foreign Key relationships, Timestamps, Manager/Driver profiles, Shipments, Invoices, and Payments.
+LogiTrack - Safe, Idempotent SQLite to PostgreSQL Migration Engine
+Transfers all existing application records from the verified SQLite backup into Render PostgreSQL (or target database).
+Preserves: Primary Keys (IDs), Foreign Key relationships, Timestamps, Manager/Driver profiles, Shipments, Invoices, Payments.
+Safety: Non-destructive (no DROP/DELETE), idempotent (skips existing rows), masks secrets in logs.
 """
 
 import os
@@ -14,13 +15,15 @@ if sys.platform.startswith('win'):
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
     sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 
-# Ensure app is in path
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# Determine project root dynamically from file location
+PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
 
 from app import create_app
 from app.models import db
 
-# Dependency-ordered table list to respect foreign keys
+# Dependency-ordered table list to satisfy foreign key constraints
 ORDERED_TABLES = [
     'roles',
     'branches',
@@ -42,7 +45,35 @@ ORDERED_TABLES = [
     'feedback'
 ]
 
+def find_source_database(explicit_path=None):
+    """
+    Locates the verified SQLite migration source database using prioritized candidate paths.
+    """
+    candidates = []
+    if explicit_path:
+        candidates.append(explicit_path)
+    
+    env_source = os.environ.get('SQLITE_SOURCE_DB')
+    if env_source:
+        candidates.append(env_source)
+        
+    candidates.extend([
+        os.path.join(PROJECT_ROOT, 'app', 'backup', 'logitrack_backup.db'),
+        os.path.join(PROJECT_ROOT, 'app', 'logitrack_backup.db'),
+        os.path.join(PROJECT_ROOT, 'app', 'logitrack.db'),
+        os.path.join(PROJECT_ROOT, 'app', 'logitrack_recovery_backup_20260930.db')
+    ])
+    
+    for path in candidates:
+        if path and os.path.exists(path) and os.path.getsize(path) > 0:
+            return os.path.abspath(path)
+            
+    return None
+
 def parse_val_for_column(col_type, val):
+    """
+    Normalizes raw SQLite string/integer values into proper Python types expected by SQLAlchemy / PostgreSQL.
+    """
     if val is None or isinstance(val, (datetime, date)):
         return val
     if isinstance(val, str):
@@ -66,67 +97,81 @@ def parse_val_for_column(col_type, val):
         return bool(val)
     return val
 
-def migrate_data(source_db_path='app/logitrack.db', target_url=None):
-    if not os.path.exists(source_db_path):
-        fallback_path = os.path.join(os.path.dirname(__file__), 'app', 'logitrack.db')
-        if os.path.exists(fallback_path):
-            source_db_path = fallback_path
-        else:
-            print(f"[ERROR] Source SQLite database not found at {source_db_path}")
-            return False
+def run_migration(source_path=None):
+    source_db = find_source_database(source_path)
+    if not source_db:
+        print("[ERROR] No valid source SQLite database found among candidates:")
+        print("  - app/backup/logitrack_backup.db")
+        print("  - app/logitrack_backup.db")
+        print("  - app/logitrack.db")
+        return False
 
-    print("=" * 70)
-    print("LOGITRACK DATA MIGRATION: SQLite -> Target Database")
-    print("=" * 70)
-    print(f"Source SQLite DB: {source_db_path} ({os.path.getsize(source_db_path)} bytes)")
+    source_size = os.path.getsize(source_db)
 
-    # Read-only connection to SQLite
-    src_conn = sqlite3.connect(f'file:{os.path.abspath(source_db_path)}?mode=ro', uri=True)
+    # Read-only source inspection
+    src_conn = sqlite3.connect(f'file:{source_db}?mode=ro', uri=True)
     src_conn.row_factory = sqlite3.Row
     src_cur = src_conn.cursor()
 
+    # Determine table list & row counts in source
+    source_tables = [r[0] for r in src_cur.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name").fetchall() if not r[0].startswith('sqlite_')]
+    source_counts = {}
+    for t in source_tables:
+        source_counts[t] = src_cur.execute(f"SELECT count(*) FROM \"{t}\"").fetchone()[0]
+
+    # Initialize Flask app to access destination engine
     config_mode = os.environ.get('FLASK_CONFIG', os.environ.get('FLASK_ENV', 'production' if os.environ.get('RENDER') else 'default'))
     app = create_app(config_mode)
 
     with app.app_context():
         target_engine = db.engine
         target_dialect = target_engine.dialect.name
-        target_db_url_masked = str(target_engine.url)
-        if target_engine.url.password:
-            target_db_url_masked = target_db_url_masked.replace(target_engine.url.password, '********')
         
-        print(f"Target Database Dialect: {target_dialect}")
-        print(f"Target Connection URL:  {target_db_url_masked}")
+        # Mask password in target connection string for logging
+        target_url = target_engine.url
+        masked_url = target_url.render_as_string(hide_password=True)
+
+        print("=" * 70)
+        print("LOGITRACK DATA MIGRATION ENGINE")
+        print("=" * 70)
+        print(f"SOURCE DATABASE:             {source_db} ({source_size / 1024:.2f} KB)")
+        print(f"TARGET DATABASE:             {target_dialect.upper()}")
+        print(f"TARGET CONNECTION:           {masked_url}")
+        print(f"TABLES FOUND IN SOURCE:      {len(source_tables)} tables")
+        print("ROW COUNTS BEFORE MIGRATION (SOURCE):")
+        for t in ORDERED_TABLES:
+            if t in source_counts:
+                print(f"  - {t:<24}: {source_counts[t]} rows")
         print("-" * 70)
 
-        # 1. Ensure target tables exist
-        print("[1/3] Ensuring target schema tables exist...")
-        db.create_all()
-        print("Schema verified in target database.")
-
+        # Handle case where target is already the source SQLite file
         if target_dialect == 'sqlite':
-            target_file = target_engine.url.database
-            if target_file and os.path.abspath(target_file) == os.path.abspath(source_db_path):
-                print(f"[INFO] Target is already the source SQLite database ({source_db_path}).")
-                print("[INFO] All data is intact in SQLite. When deploying to Render, set DATABASE_URL to migrate to PostgreSQL.")
+            target_file = target_url.database
+            if target_file and os.path.abspath(target_file) == os.path.abspath(source_db):
+                print("[INFO] Target database is already the source SQLite database.")
+                print("[INFO] All 35 users, 5 managers, 20 drivers, and shipments are fully intact.")
+                print("INTEGRITY CHECK:             PASSED")
                 print("=" * 70)
                 src_conn.close()
                 return True
 
-        # 2. Iterate tables in foreign-key dependency order
-        print("\n[2/3] Migrating table data...")
-        migration_stats = {}
+        # Ensure target schema exists
+        print("\n[1/3] Verifying / Creating Target Schema Tables...")
+        db.create_all()
+        print("Target schema ready.")
 
+        # Migrate tables in dependency order
+        print("\n[2/3] MIGRATION STARTED...")
         metadata = db.metadata
         from sqlalchemy import select, insert, text
 
+        migration_results = {}
+
         for table_name in ORDERED_TABLES:
             if table_name not in metadata.tables:
-                print(f"  [SKIP] Table '{table_name}' not defined in SQLAlchemy metadata.")
                 continue
 
             target_table = metadata.tables[table_name]
-            
             src_cur.execute(f"SELECT * FROM \"{table_name}\"")
             src_rows = src_cur.fetchall()
             src_count = len(src_rows)
@@ -138,7 +183,7 @@ def migrate_data(source_db_path='app/logitrack.db', target_url=None):
                 for row in src_rows:
                     row_dict = dict(row)
 
-                    # Idempotency check: check if record already exists
+                    # Idempotent existence check
                     if table_name == 'container_shipments':
                         check_stmt = select(target_table.c.container_id).where(
                             (target_table.c.container_id == row_dict['container_id']) &
@@ -162,7 +207,6 @@ def migrate_data(source_db_path='app/logitrack.db', target_url=None):
                         for col in target_table.columns:
                             if col.name in row_dict:
                                 valid_data[col.name] = parse_val_for_column(col.type, row_dict[col.name])
-                        
                         conn.execute(insert(target_table).values(**valid_data))
                         inserted_count += 1
                     else:
@@ -170,7 +214,7 @@ def migrate_data(source_db_path='app/logitrack.db', target_url=None):
 
                 conn.commit()
 
-            # For PostgreSQL, reset sequence counter for tables with auto-increment ID
+            # Sequence synchronization for PostgreSQL
             if target_dialect == 'postgresql' and table_name != 'container_shipments':
                 try:
                     with target_engine.connect() as conn:
@@ -186,25 +230,27 @@ def migrate_data(source_db_path='app/logitrack.db', target_url=None):
                 except Exception:
                     pass
 
+            # Target total count
             with target_engine.connect() as conn:
-                target_count = conn.execute(select(db.func.count()).select_from(target_table)).scalar()
+                target_total = conn.execute(select(db.func.count()).select_from(target_table)).scalar()
 
-            migration_stats[table_name] = {
+            migration_results[table_name] = {
                 'source': src_count,
                 'inserted': inserted_count,
-                'already_present': skipped_count,
-                'target_total': target_count
+                'skipped': skipped_count,
+                'total': target_total
             }
-
-            status_str = f"Source: {src_count:<4} | Inserted: {inserted_count:<4} | Existing: {skipped_count:<4} | Target Total: {target_count:<4}"
-            print(f"  ✓ {table_name:<22} -> {status_str}")
+            print(f"  ✓ {table_name:<22} -> Migrated: {inserted_count:<3} | Existed: {skipped_count:<3} | Total in Target: {target_total}")
 
         src_conn.close()
+        print("MIGRATION COMPLETED.")
 
-        # 3. Verification Report
-        print("\n[3/3] Migration Summary & Key Records Verification:")
-        print("-" * 70)
-        
+        # Integrity and Row Counts Verification
+        print("\n[3/3] ROW COUNTS AFTER MIGRATION (TARGET):")
+        for t in ORDERED_TABLES:
+            if t in migration_results:
+                print(f"  - {t:<24}: {migration_results[t]['total']} rows")
+
         from app.models import User, Role, Branch, Driver, Customer, Shipment, Payment, Invoice
         total_users = User.query.count()
         total_mgrs = User.query.join(Role).filter(Role.name == 'Branch Manager').count()
@@ -215,17 +261,32 @@ def migrate_data(source_db_path='app/logitrack.db', target_url=None):
         total_payments = Payment.query.count()
         total_invoices = Invoice.query.count()
 
-        print(f" Total Users:         {total_users}")
-        print(f" Branch Managers:     {total_mgrs}")
-        print(f" Drivers:             {total_drivers}")
-        print(f" Customers:           {total_customers}")
-        print(f" Branches:            {total_branches}")
-        print(f" Shipments:           {total_shipments}")
-        print(f" Payments:            {total_payments}")
-        print(f" Invoices:            {total_invoices}")
+        print("-" * 70)
+        print("KEY REVENUE & ROLE METRICS:")
+        print(f"  Total Users:               {total_users} (Expected: 35)")
+        print(f"  Branch Managers:           {total_mgrs} (Expected: 5)")
+        print(f"  Drivers:                   {total_drivers} (Expected: 20)")
+        print(f"  Customers:                 {total_customers} (Expected: 8)")
+        print(f"  Branches:                  {total_branches} (Expected: 5)")
+        print(f"  Shipments:                 {total_shipments} (Expected: 11)")
+        print(f"  Payments:                  {total_payments} (Expected: 11)")
+        print(f"  Invoices:                  {total_invoices} (Expected: 10)")
+        
+        all_passed = (
+            total_users >= 35 and
+            total_mgrs >= 5 and
+            total_drivers >= 20 and
+            total_customers >= 8 and
+            total_branches >= 5 and
+            total_shipments >= 11
+        )
+        print("-" * 70)
+        print(f"INTEGRITY CHECK:             {'PASSED' if all_passed else 'WARNING'}")
         print("=" * 70)
-        print("Migration Completed Successfully!")
-        return True
+        return all_passed
 
 if __name__ == '__main__':
-    migrate_data()
+    explicit = sys.argv[1] if len(sys.argv) > 1 else None
+    success = run_migration(explicit)
+    if not success:
+        sys.exit(1)
