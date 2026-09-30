@@ -23,7 +23,7 @@
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <div class="toast align-items-center text-white bg-{{ 'danger' if category == 'error' or category == 'danger' else ('warning' if category == 'warning' else 'success') }} border-0 show shadow" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="4000">
+                    <div class="toast align-items-center text-white bg-{{ 'danger' if category == 'error' or category == 'danger' else ('warning' if category == 'warning' else 'success') }} border-0 show shadow" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="4500">
                         <div class="d-flex">
                             <div class="toast-body">
                                 <i class="fa-solid fa-bell me-2"></i> {{ message }}
@@ -40,17 +40,17 @@
     <!-- Dashboard Panel Layout -->
     <div class="dashboard-container">
         <!-- Mobile Sidebar Backdrop Overlay -->
-        <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+        <div class="sidebar-backdrop" id="sidebar-backdrop" aria-hidden="true"></div>
 
         <!-- Sidebar Navigation (Responsive Desktop & Mobile Drawer) -->
-        <aside class="sidebar" id="app-sidebar">
+        <aside class="sidebar" id="app-sidebar" aria-label="Sidebar navigation">
             <div class="sidebar-header">
                 <a href="/" class="text-white text-decoration-none d-flex align-items-center">
                     <i class="fa-solid fa-truck-ramp-box fa-lg me-2 text-warning"></i>
                     <span class="fs-5 fw-bold font-brand">LogiTrack</span>
                 </a>
                 <!-- Mobile Close Button -->
-                <button class="btn btn-link text-white-50 d-lg-none p-1 border-0 fs-5" id="sidebar-close-btn" type="button" aria-label="Close Navigation">
+                <button class="btn btn-link text-white-50 d-lg-none p-2 border-0 fs-5" id="sidebar-close-btn" type="button" aria-label="Close Navigation Menu">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -60,7 +60,7 @@
                     <i class="fa-solid fa-circle-user text-warning fa-lg"></i>
                     <div>
                         <div class="small fw-bold text-white lh-1">{{ current_user.username }}</div>
-                        <span class="text-white-50" style="font-size: 0.65rem;">{{ current_user.role.name }}</span>
+                        <span class="text-white-50" style="font-size: 0.68rem;">{{ current_user.role.name }}</span>
                     </div>
                 </div>
             </div>
@@ -161,17 +161,13 @@
 
         <!-- Main Dashboard View Container -->
         <main class="main-content">
-            <!-- Top Dashboard Navbar -->
+            <!-- Standardized Top Dashboard Navbar -->
             <header class="top-navbar d-flex align-items-center justify-content-between">
+                <!-- Left Section: Mobile Brand / Desktop Title -->
                 <div class="d-flex align-items-center gap-2">
-                    <!-- Mobile Hamburger Button to Toggle Drawer -->
-                    <button class="btn btn-outline-secondary btn-sm d-lg-none sidebar-toggle-btn" id="sidebar-toggle-btn" type="button" aria-label="Open Navigation">
-                        <i class="fa-solid fa-bars fa-lg"></i>
-                    </button>
-                    
-                    <a href="/" class="d-flex align-items-center text-decoration-none d-lg-none me-2">
-                        <i class="fa-solid fa-truck-ramp-box text-warning me-1"></i>
-                        <span class="fw-bold fs-6 brand-text-nav">LogiTrack</span>
+                    <a href="/" class="d-flex align-items-center text-decoration-none d-lg-none me-1">
+                        <i class="fa-solid fa-truck-ramp-box text-warning me-1 fs-5"></i>
+                        <span class="fw-bold fs-6 brand-text-nav font-brand">LogiTrack</span>
                     </a>
 
                     <div>
@@ -180,7 +176,8 @@
                     </div>
                 </div>
                 
-                <div class="d-flex align-items-center gap-2 gap-sm-3">
+                <!-- Right Section: Theme Toggle, Notifications, User Dropdown, & Mobile Hamburger -->
+                <div class="d-flex align-items-center gap-1 gap-sm-2">
                     <!-- Theme Toggle Switch -->
                     <button class="btn btn-outline-secondary btn-sm" id="theme-toggle" title="Switch Theme" aria-label="Switch Theme">
                         <i class="fa-solid fa-moon" id="theme-icon"></i>
@@ -194,7 +191,7 @@
                                 <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
                             {% endif %}
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-end p-2 responsive-dropdown-menu" style="width: min(320px, calc(100vw - 32px)); max-height: 380px; overflow-y: auto;">
+                        <ul class="dropdown-menu dropdown-menu-end p-2" style="width: min(320px, calc(100vw - 24px)); max-height: 380px; overflow-y: auto;">
                             <li><h6 class="dropdown-header fw-bold text-primary">System Notifications</h6></li>
                             {% if current_user.notifications %}
                                 {% for notif in current_user.notifications|reverse %}
@@ -216,7 +213,7 @@
                     
                     <!-- User Settings dropdown -->
                     <div class="dropdown">
-                        <button class="btn btn-primary btn-sm dropdown-toggle d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button class="btn btn-primary btn-sm dropdown-toggle d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="User Account Menu">
                             <i class="fa-solid fa-circle-user"></i>
                             <span class="d-none d-sm-inline">{{ current_user.username }}</span>
                         </button>
@@ -225,11 +222,16 @@
                                 <div class="fw-bold small">{{ current_user.username }}</div>
                                 <span class="badge bg-secondary" style="font-size: 0.65rem;">{{ current_user.role.name }}</span>
                             </li>
-                            <li><a class="dropdown-item" href="{{ url_for('auth.profile') }}"><i class="fa-solid fa-gears me-2 text-primary"></i>Account Profile</a></li>
+                            <li><a class="dropdown-item py-2" href="{{ url_for('auth.profile') }}"><i class="fa-solid fa-gears me-2 text-primary"></i>Account Profile</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}"><i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Sign Out</a></li>
+                            <li><a class="dropdown-item py-2 text-danger" href="{{ url_for('auth.logout') }}"><i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Sign Out</a></li>
                         </ul>
                     </div>
+
+                    <!-- Mobile Hamburger Button to Toggle Drawer -->
+                    <button class="btn btn-outline-secondary btn-sm d-lg-none sidebar-toggle-btn ms-1" id="sidebar-toggle-btn" type="button" aria-label="Toggle navigation menu">
+                        <i class="fa-solid fa-bars fa-lg"></i>
+                    </button>
                 </div>
             </header>
 
@@ -238,7 +240,7 @@
                 {% block content %}{% endblock %}
             </div>
 
-            <!-- Mobile Quick Bottom Navigation Bar -->
+            <!-- Standard Mobile Quick Bottom Navigation Bar -->
             <nav class="mobile-bottom-nav d-lg-none" aria-label="Mobile Navigation">
                 {% if current_user.role.name == 'Customer' %}
                     <a href="{{ url_for('customer.dashboard') }}" class="bottom-nav-item {% if request.endpoint == 'customer.dashboard' %}active{% endif %}">
@@ -324,7 +326,7 @@
             <a class="navbar-brand d-flex align-items-center fw-bold font-brand" href="/">
                 <i class="fa-solid fa-truck-ramp-box fa-lg me-2 text-warning"></i> LogiTrack
             </a>
-            <!-- Fixed Bootstrap Navbar Toggler with proper data-bs-toggle -->
+            <!-- Standard Mobile Navbar Toggler (min 44px) -->
             <button class="navbar-toggler border-0 shadow-none p-2" type="button" data-bs-toggle="collapse" data-bs-target="#public-nav" aria-controls="public-nav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -365,7 +367,7 @@
     <!-- Bootstrap 5 bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- Theme Toggle, Mobile Drawer, & Interactions Script -->
+    <!-- Theme Toggle, Mobile Drawer, & Touch Interactions Script -->
     <script>
         const themeToggle = document.getElementById('theme-toggle');
         const themeIcon = document.getElementById('theme-icon');

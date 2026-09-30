@@ -1,8 +1,11 @@
 /* ==========================================================================
-   LogiTrack Global Responsive Stylesheet - Laptop & Mobile Optimized
+   LogiTrack Global Responsive Stylesheet - Production Multi-Device System
+   Compatible with: Mobile (320px–480px), Tablet (768px–1023px),
+                    Laptop (1024px–1439px), Desktop (1440px+)
    ========================================================================== */
 
 :root {
+    /* Color Palette */
     --primary-color: #1e3a8a;
     --primary-light: #2563eb;
     --primary-dark: #172554;
@@ -13,28 +16,39 @@
     --danger-color: #ef4444;
     --info-color: #06b6d4;
     
+    /* Theme Tokens - Light Mode */
     --bg-light: #f8fafc;
     --card-bg-light: #ffffff;
     --text-color-light: #1e293b;
     --text-muted-light: #64748b;
     --border-color-light: #e2e8f0;
+    --input-bg-light: #ffffff;
     
-    /* Dark Mode variables */
+    /* Theme Tokens - Dark Mode */
     --bg-dark: #0b1120;
     --card-bg-dark: #1e293b;
     --text-color-dark: #f8fafc;
     --text-muted-dark: #94a3b8;
     --border-color-dark: #334155;
+    --input-bg-dark: #131d31;
     
     /* Layout Dimensions */
     --sidebar-width: 260px;
     --top-navbar-height: 64px;
     --bottom-nav-height: 62px;
+    --touch-target-min: 44px;
     --transition-speed: 0.28s;
     --transition-ease: cubic-bezier(0.16, 1, 0.3, 1);
+    
+    /* Safe Area Insets (Mobile Notch / Home Indicator) */
+    --safe-area-top: env(safe-area-inset-top, 0px);
+    --safe-area-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-/* Base Resets & Global Typography */
+/* ==========================================================================
+   1. Base Resets & Typography
+   ========================================================================== */
+
 *, *::before, *::after {
     box-sizing: border-box;
 }
@@ -42,6 +56,9 @@
 html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    width: 100%;
+    overflow-x: hidden;
 }
 
 body {
@@ -50,10 +67,14 @@ body {
     color: var(--text-color-light);
     transition: background-color var(--transition-speed), color var(--transition-speed);
     min-height: 100vh;
+    width: 100%;
     display: flex;
     flex-direction: column;
     margin: 0;
+    padding: 0;
     overflow-x: hidden;
+    position: relative;
+    line-height: 1.5;
 }
 
 body[data-theme="dark"] {
@@ -65,16 +86,80 @@ body[data-theme="dark"] {
     font-family: 'Outfit', 'Inter', sans-serif !important;
 }
 
-/* Auth Pages Background Gradient */
+/* Fluid Typography Helpers */
+h1, .h1 { font-size: clamp(1.6rem, 4vw, 2.5rem); }
+h2, .h2 { font-size: clamp(1.35rem, 3vw, 2rem); }
+h3, .h3 { font-size: clamp(1.2rem, 2.5vw, 1.6rem); }
+h4, .h4 { font-size: clamp(1.05rem, 2vw, 1.35rem); }
+h5, .h5 { font-size: clamp(0.95rem, 1.5vw, 1.15rem); }
+h6, .h6 { font-size: clamp(0.85rem, 1.2vw, 1rem); }
+
+/* Prevent text clipping & overflow */
+.text-break-all {
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+}
+
+/* ==========================================================================
+   2. Touch Target & Accessibility Standards (≥44px Minimum)
+   ========================================================================== */
+
+button, 
+.btn, 
+.form-select, 
+.form-control, 
+.nav-link, 
+.dropdown-item,
+.bottom-nav-item,
+.sidebar-menu-item a {
+    touch-action: manipulation;
+}
+
+.btn {
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+@media (max-width: 767.98px) {
+    .btn {
+        min-height: var(--touch-target-min);
+        padding-top: 0.55rem;
+        padding-bottom: 0.55rem;
+    }
+    
+    .btn-sm {
+        min-height: 38px;
+        padding: 0.4rem 0.75rem;
+        font-size: 0.85rem;
+    }
+}
+
+/* ==========================================================================
+   3. Auth Pages & Glassmorphism Cards
+   ========================================================================== */
+
 .auth-bg {
     background: linear-gradient(135deg, var(--primary-dark) 0%, #1e3a8a 50%, var(--primary-light) 100%);
     min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 2rem 0;
 }
 
-/* Glassmorphism card */
+@media (max-width: 576px) {
+    .auth-bg {
+        padding: 1.25rem 0 3rem 0;
+    }
+}
+
 .glass-card {
-    background: rgba(255, 255, 255, 0.94);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     box-shadow: 0 10px 30px 0 rgba(15, 23, 42, 0.12);
     border-radius: 16px;
     backdrop-filter: blur(12px);
@@ -82,13 +167,13 @@ body[data-theme="dark"] {
 }
 
 body[data-theme="dark"] .glass-card {
-    background: rgba(30, 41, 59, 0.9);
+    background: rgba(30, 41, 59, 0.92);
     border: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow: 0 10px 30px 0 rgba(0, 0, 0, 0.4);
 }
 
 /* ==========================================================================
-   Dashboard Main Container & Sidebar (Laptop & Mobile Drawer)
+   4. Dashboard Layout & Desktop Sidebar vs Mobile Drawer
    ========================================================================== */
 
 .dashboard-container {
@@ -98,7 +183,7 @@ body[data-theme="dark"] .glass-card {
     position: relative;
 }
 
-/* Sidebar navigation - Desktop */
+/* Desktop Sidebar */
 .sidebar {
     width: var(--sidebar-width);
     background-color: var(--primary-dark);
@@ -117,7 +202,7 @@ body[data-theme="dark"] .glass-card {
 
 .sidebar-header {
     background-color: rgba(0, 0, 0, 0.25);
-    padding: 1.25rem 1.5rem;
+    padding: 1rem 1.25rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -136,19 +221,20 @@ body[data-theme="dark"] .glass-card {
 .sidebar-menu-item a {
     display: flex;
     align-items: center;
-    padding: 11px 20px;
-    color: rgba(255, 255, 255, 0.8);
+    padding: 12px 18px;
+    color: rgba(255, 255, 255, 0.82);
     text-decoration: none;
     font-size: 0.92rem;
     font-weight: 500;
     transition: all 0.2s ease;
     border-left: 4px solid transparent;
+    min-height: var(--touch-target-min);
 }
 
 .sidebar-menu-item a:hover,
 .sidebar-menu-item.active a {
     color: #ffffff;
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.12);
     border-left-color: var(--accent-color);
 }
 
@@ -158,14 +244,16 @@ body[data-theme="dark"] .glass-card {
     margin-right: 12px;
     display: flex;
     justify-content: center;
+    flex-shrink: 0;
 }
 
-/* Main Dashboard content layout */
+/* Main Content Container */
 .main-content {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
     min-width: 0;
+    width: 100%;
     overflow-x: hidden;
     background-color: var(--bg-light);
     transition: background-color var(--transition-speed);
@@ -175,16 +263,18 @@ body[data-theme="dark"] .main-content {
     background-color: var(--bg-dark);
 }
 
+/* Top Dashboard Navbar */
 .top-navbar {
     background-color: var(--card-bg-light);
     border-bottom: 1px solid var(--border-color-light);
-    padding: 0.75rem 1.5rem;
+    padding: 0.65rem 1.25rem;
     min-height: var(--top-navbar-height);
     position: sticky;
     top: 0;
     z-index: 1020;
     backdrop-filter: blur(8px);
     transition: background-color var(--transition-speed), border-color var(--transition-speed);
+    width: 100%;
 }
 
 body[data-theme="dark"] .top-navbar {
@@ -193,26 +283,26 @@ body[data-theme="dark"] .top-navbar {
 }
 
 .sidebar-toggle-btn {
-    width: 38px;
-    height: 38px;
+    width: 44px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 8px;
+    border-radius: 10px;
+    padding: 0;
+    flex-shrink: 0;
 }
 
 .brand-text-nav {
     color: var(--text-color-light);
+    white-space: nowrap;
 }
 
 body[data-theme="dark"] .brand-text-nav {
     color: var(--text-color-dark);
 }
 
-/* ==========================================================================
-   Mobile Sidebar Drawer & Backdrop Overlay (< 992px)
-   ========================================================================== */
-
+/* Mobile Sidebar Drawer (< 992px) */
 .sidebar-backdrop {
     display: none;
     position: fixed;
@@ -220,7 +310,7 @@ body[data-theme="dark"] .brand-text-nav {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(15, 23, 42, 0.6);
+    background-color: rgba(15, 23, 42, 0.65);
     backdrop-filter: blur(4px);
     z-index: 1045;
     opacity: 0;
@@ -239,30 +329,32 @@ body[data-theme="dark"] .brand-text-nav {
         left: 0;
         bottom: 0;
         height: 100%;
-        width: 280px;
+        width: 290px;
         max-width: 85vw;
         transform: translateX(-100%);
         box-shadow: none;
         z-index: 1050;
         background-color: #0d1527;
+        padding-top: var(--safe-area-top);
+        padding-bottom: var(--safe-area-bottom);
     }
 
     .sidebar.open {
         transform: translateX(0);
-        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.4);
+        box-shadow: 10px 0 35px rgba(0, 0, 0, 0.45);
     }
 
     body.drawer-open {
-        overflow: hidden;
+        overflow: hidden !important;
     }
 
     .top-navbar {
-        padding: 0.6rem 1rem;
+        padding: 0.55rem 0.85rem;
     }
 }
 
 /* ==========================================================================
-   Mobile Quick Bottom Navigation Bar (< 992px)
+   5. Mobile Quick Bottom Navigation Bar (< 992px)
    ========================================================================== */
 
 .mobile-bottom-nav {
@@ -270,22 +362,22 @@ body[data-theme="dark"] .brand-text-nav {
     bottom: 0;
     left: 0;
     right: 0;
-    height: var(--bottom-nav-height);
-    background: rgba(255, 255, 255, 0.95);
+    height: calc(var(--bottom-nav-height) + var(--safe-area-bottom));
+    background: rgba(255, 255, 255, 0.97);
     backdrop-filter: blur(12px);
     border-top: 1px solid var(--border-color-light);
     display: flex;
     justify-content: space-around;
-    align-items: center;
+    align-items: flex-start;
     z-index: 1030;
-    padding: 0 4px;
-    box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.04);
+    padding: 4px 6px var(--safe-area-bottom) 6px;
+    box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.05);
 }
 
 body[data-theme="dark"] .mobile-bottom-nav {
-    background: rgba(30, 41, 59, 0.95);
+    background: rgba(30, 41, 59, 0.97);
     border-top: 1px solid var(--border-color-dark);
-    box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.3);
 }
 
 .bottom-nav-item {
@@ -295,12 +387,13 @@ body[data-theme="dark"] .mobile-bottom-nav {
     justify-content: center;
     text-decoration: none;
     color: var(--text-muted-light);
-    font-size: 0.65rem;
+    font-size: 0.68rem;
     font-weight: 600;
-    padding: 6px 8px;
+    padding: 6px 4px;
     border-radius: 8px;
     flex: 1;
     min-width: 0;
+    height: calc(var(--bottom-nav-height) - 8px);
     text-align: center;
     transition: all 0.2s ease;
 }
@@ -310,7 +403,7 @@ body[data-theme="dark"] .bottom-nav-item {
 }
 
 .bottom-nav-item i {
-    font-size: 1.15rem;
+    font-size: 1.18rem;
     margin-bottom: 2px;
     transition: transform 0.2s ease;
 }
@@ -320,6 +413,7 @@ body[data-theme="dark"] .bottom-nav-item {
     overflow: hidden;
     text-overflow: ellipsis;
     width: 100%;
+    line-height: 1.1;
 }
 
 .bottom-nav-item:hover,
@@ -340,15 +434,15 @@ body[data-theme="dark"] .bottom-nav-item.active i {
     color: #60a5fa;
 }
 
-/* Space padding at bottom of main content on mobile so nothing gets hidden behind bottom nav */
+/* Mobile bottom spacing buffer */
 @media (max-width: 991.98px) {
     .content-wrapper {
-        padding-bottom: 75px !important;
+        padding-bottom: calc(var(--bottom-nav-height) + 24px) !important;
     }
 }
 
 /* ==========================================================================
-   Card customizations & KPI Metrics
+   6. Cards & KPI Metrics (Responsive Grid Reflow)
    ========================================================================== */
 
 .kpi-card {
@@ -365,8 +459,8 @@ body[data-theme="dark"] .kpi-card {
 }
 
 .kpi-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px -2px rgba(0, 0, 0, 0.08);
 }
 
 .kpi-icon {
@@ -382,33 +476,59 @@ body[data-theme="dark"] .kpi-card {
 
 @media (max-width: 576px) {
     .kpi-icon {
-        width: 38px;
-        height: 38px;
+        width: 40px;
+        height: 40px;
         font-size: 1.15rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
     }
 }
 
 /* ==========================================================================
-   Responsive Tables & Data Grids
+   7. Responsive Tables & Data Grids (Zero Horizontal Page Overflow)
    ========================================================================== */
 
 .table-responsive {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     border-radius: 12px;
+    width: 100%;
+    margin-bottom: 0;
+}
+
+.table-responsive::-webkit-scrollbar {
+    height: 6px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 6px;
+}
+
+body[data-theme="dark"] .table-responsive::-webkit-scrollbar-thumb {
+    background: #475569;
 }
 
 .custom-table {
     color: inherit;
     margin-bottom: 0;
     width: 100%;
+    min-width: 600px; /* Ensures readable table layout on small screens */
+}
+
+@media (max-width: 767.98px) {
+    .custom-table {
+        min-width: 580px;
+    }
 }
 
 .custom-table th {
     background-color: rgba(0, 0, 0, 0.02);
     color: var(--text-muted-light);
     font-weight: 600;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     padding: 12px 14px;
@@ -445,7 +565,7 @@ body[data-theme="dark"] .custom-table td {
     white-space: nowrap;
 }
 
-/* Custom styling for status badge colors */
+/* Status colors */
 .status-booked { background-color: #eff6ff; color: #1d4ed8; }
 .status-payment-pending { background-color: #fffbeb; color: #b45309; }
 .status-confirmed { background-color: #f0fdf4; color: #15803d; }
@@ -475,7 +595,7 @@ body[data-theme="dark"] .status-completed { background-color: rgba(22, 101, 52, 
 body[data-theme="dark"] .status-cancelled { background-color: rgba(153, 27, 27, 0.25); color: #fca5a5; }
 
 /* ==========================================================================
-   Responsive Forms, Inputs & Controls
+   8. Responsive Forms & iOS Safari Auto-Zoom Fix
    ========================================================================== */
 
 .form-control, .form-select {
@@ -484,29 +604,31 @@ body[data-theme="dark"] .status-cancelled { background-color: rgba(153, 27, 27, 
     border: 1px solid var(--border-color-light);
     border-radius: 8px;
     font-size: 0.92rem;
-    padding: 0.55rem 0.75rem;
+    padding: 0.6rem 0.85rem;
+    min-height: 42px;
 }
 
 /* Prevent auto-zoom on mobile iOS Safari */
 @media (max-width: 768px) {
     .form-control, .form-select, input, select, textarea {
         font-size: 16px !important;
+        min-height: 44px;
     }
 }
 
 body[data-theme="dark"] .form-control, 
 body[data-theme="dark"] .form-select {
-    background-color: #131d31;
+    background-color: var(--input-bg-dark);
     color: var(--text-color-dark);
     border: 1px solid var(--border-color-dark);
 }
 
 body[data-theme="dark"] .form-control:focus, 
 body[data-theme="dark"] .form-select:focus {
-    background-color: #131d31;
+    background-color: var(--input-bg-dark);
     color: var(--text-color-dark);
     border-color: var(--primary-light);
-    box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.2);
+    box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.25);
 }
 
 body[data-theme="dark"] .input-group-text {
@@ -515,15 +637,43 @@ body[data-theme="dark"] .input-group-text {
     color: var(--text-muted-dark);
 }
 
-/* Touch-friendly switches & checkboxes */
 .form-check-input {
     cursor: pointer;
-    min-width: 1.2em;
-    min-height: 1.2em;
+    min-width: 1.3em;
+    min-height: 1.3em;
 }
 
 /* ==========================================================================
-   Tracking Map & Route Sidebars (Laptop vs Mobile Adaptations)
+   9. Fluid Images, Modals & Media Handling
+   ========================================================================== */
+
+img, .responsive-img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Image preview modal styling */
+.image-preview-modal-img {
+    max-height: 75vh;
+    max-width: 100%;
+    width: auto;
+    object-fit: contain;
+    margin: 0 auto;
+    display: block;
+}
+
+/* Product thumbnail icons in tables */
+.table-img-thumb {
+    width: 38px;
+    height: 38px;
+    object-fit: cover;
+    border-radius: 8px;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+/* ==========================================================================
+   10. Tracking Map & Route Sidebars (Laptop vs Mobile Adaptations)
    ========================================================================== */
 
 .map-container {
@@ -532,6 +682,7 @@ body[data-theme="dark"] .input-group-text {
     overflow: hidden;
     position: relative;
     border: 1px solid var(--border-color-light);
+    width: 100%;
 }
 
 @media (max-width: 991.98px) {
@@ -539,7 +690,6 @@ body[data-theme="dark"] .input-group-text {
         height: 360px !important;
     }
     
-    /* On mobile, route-sidebar transforms to full width under map or inside card */
     .route-sidebar {
         position: static !important;
         width: 100% !important;
@@ -549,16 +699,17 @@ body[data-theme="dark"] .input-group-text {
     }
     
     .map-title-overlay {
-        left: 12px !important;
-        top: 12px !important;
-        padding: 8px 14px !important;
-        border-radius: 14px !important;
+        left: 10px !important;
+        top: 10px !important;
+        padding: 6px 12px !important;
+        border-radius: 12px !important;
+        max-width: 65% !important;
     }
     
     .map-live-badge {
-        right: 12px !important;
-        top: 12px !important;
-        padding: 6px 12px !important;
+        right: 10px !important;
+        top: 10px !important;
+        padding: 6px 10px !important;
     }
 }
 
@@ -569,13 +720,14 @@ body[data-theme="dark"] .input-group-text {
 }
 
 /* ==========================================================================
-   Responsive Steppers & Progress Bars
+   11. Steppers & Progress Bars
    ========================================================================== */
 
 .stepper-container {
     padding: 10px 0;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    width: 100%;
 }
 
 @media (max-width: 768px) {
@@ -604,7 +756,7 @@ body[data-theme="dark"] .input-group-text {
 }
 
 /* ==========================================================================
-   Signature Pad Canvas Touch Responsiveness
+   12. Signature Canvas & Touch Drawing
    ========================================================================== */
 
 #sig-canvas, #pickup-sig-canvas {
@@ -612,7 +764,9 @@ body[data-theme="dark"] .input-group-text {
     border-radius: 8px;
     cursor: crosshair;
     background-color: #ffffff;
+    width: 100%;
     max-width: 100%;
+    height: auto;
     touch-action: none;
 }
 
@@ -623,7 +777,55 @@ body[data-theme="dark"] #pickup-sig-canvas {
 }
 
 /* ==========================================================================
-   Public Navigation, Hero Banner, & Footer
+   13. Dropdowns, Modals & Toast Alerts (Refined Mobile Bounds)
+   ========================================================================== */
+
+.dropdown-menu {
+    border-radius: 12px;
+    border: 1px solid var(--border-color-light);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    max-width: min(340px, calc(100vw - 24px));
+    z-index: 1060;
+}
+
+body[data-theme="dark"] .dropdown-menu {
+    background-color: var(--card-bg-dark);
+    border-color: var(--border-color-dark);
+    color: var(--text-color-dark);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+}
+
+body[data-theme="dark"] .dropdown-item {
+    color: var(--text-color-dark);
+}
+
+body[data-theme="dark"] .dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.toast-container {
+    max-width: min(380px, calc(100vw - 24px));
+}
+
+@media (max-width: 576px) {
+    .toast-container {
+        left: 50% !important;
+        transform: translateX(-50%);
+        right: auto !important;
+        width: calc(100% - 24px);
+    }
+}
+
+/* Modal mobile adaptation */
+@media (max-width: 576px) {
+    .modal-dialog {
+        margin: 0.5rem;
+        max-width: calc(100vw - 1rem);
+    }
+}
+
+/* ==========================================================================
+   14. Public Header, Navigation & Footer
    ========================================================================== */
 
 .public-navbar {
@@ -632,9 +834,12 @@ body[data-theme="dark"] #pickup-sig-canvas {
 }
 
 .public-navbar .nav-link {
-    color: rgba(255, 255, 255, 0.8) !important;
+    color: rgba(255, 255, 255, 0.85) !important;
     font-weight: 500;
     transition: color 0.2s;
+    min-height: var(--touch-target-min);
+    display: flex;
+    align-items: center;
 }
 
 .public-navbar .nav-link:hover {
@@ -644,12 +849,12 @@ body[data-theme="dark"] #pickup-sig-canvas {
 .footer {
     margin-top: auto;
     background-color: #0b1120;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.65);
     border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* ==========================================================================
-   Utility Helpers & Micro-animations
+   15. Utilities & Micro-interactions
    ========================================================================== */
 
 .hover-white:hover {
@@ -661,11 +866,11 @@ body[data-theme="dark"] #pickup-sig-canvas {
 }
 
 .hover-grow:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
 }
 
-/* Custom sleek scrollbars */
+/* Custom Sleek Scrollbars */
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;

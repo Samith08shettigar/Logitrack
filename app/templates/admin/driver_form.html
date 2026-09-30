@@ -81,9 +81,9 @@
                     </div>
                     {% endif %}
 
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary w-100"><i class="fa-solid fa-circle-check me-2"></i>Save Driver</button>
-                        <a href="{{ url_for('admin.list_drivers') }}" class="btn btn-outline-secondary w-50">Cancel</a>
+                    <div class="d-flex flex-column flex-sm-row gap-2">
+                        <button type="submit" class="btn btn-primary flex-fill"><i class="fa-solid fa-circle-check me-2"></i>Save Driver</button>
+                        <a href="{{ url_for('admin.list_drivers') }}" class="btn btn-outline-secondary">Cancel</a>
                     </div>
                 </form>
             </div>

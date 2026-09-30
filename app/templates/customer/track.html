@@ -834,25 +834,25 @@
                 <div class="d-flex justify-content-between pb-2"><b>Insurance Cover:</b> <span>{{ 'Covered' if shipment.insurance else 'None' }}</span></div>
             </div>
             
-            <div class="mt-4 d-flex justify-content-center gap-4">
+            <div class="mt-4 d-flex flex-wrap justify-content-center align-items-end gap-3">
                 {% if shipment.package_image_path %}
-                <div>
-                    <small class="text-muted d-block mb-1 text-center">Product Image</small>
+                <div class="text-center">
+                    <small class="text-muted d-block mb-1">Product Image</small>
                     <a href="#" data-bs-toggle="modal" data-bs-target="#imagePreviewModal" onclick="document.getElementById('modalPreviewImg').src='{{ url_for('static', filename=shipment.package_image_path) }}'; return false;" title="Tap to expand">
-                        <img src="{{ url_for('static', filename=shipment.package_image_path) }}" alt="Product Image" style="width: 100px; height: 100px; object-fit: cover; cursor: pointer;" class="border rounded bg-white p-1">
+                        <img src="{{ url_for('static', filename=shipment.package_image_path) }}" alt="Product Image" style="width: 90px; height: 90px; object-fit: cover; cursor: pointer;" class="border rounded bg-white p-1 shadow-sm">
                     </a>
                 </div>
                 {% endif %}
                 {% if shipment.qr_code_path %}
-                <div>
-                    <small class="text-muted d-block mb-1 text-center">Receipt QR Code</small>
-                    <img src="{{ url_for('static', filename=shipment.qr_code_path) }}" alt="QR Code" style="width: 100px; height: 100px;" class="border rounded bg-white p-1">
+                <div class="text-center">
+                    <small class="text-muted d-block mb-1">Receipt QR Code</small>
+                    <img src="{{ url_for('static', filename=shipment.qr_code_path) }}" alt="QR Code" style="width: 90px; height: 90px;" class="border rounded bg-white p-1 shadow-sm">
                 </div>
                 {% endif %}
                 {% if shipment.barcode_path %}
-                <div>
-                    <small class="text-muted d-block mb-1 text-center">Container Barcode</small>
-                    <img src="{{ url_for('static', filename=shipment.barcode_path) }}" alt="Barcode" style="width: 180px; height: 60px;" class="border rounded bg-white p-1">
+                <div class="text-center">
+                    <small class="text-muted d-block mb-1">Container Barcode</small>
+                    <img src="{{ url_for('static', filename=shipment.barcode_path) }}" alt="Barcode" style="max-width: 170px; width: 100%; height: auto; min-height: 48px;" class="border rounded bg-white p-1 shadow-sm">
                     <a href="{{ url_for('customer.download_invoice', tracking_number=shipment.tracking_number) }}" class="btn btn-outline-secondary btn-sm d-block mt-2 fw-bold"><i class="fa-solid fa-file-pdf me-1"></i>Download PDF Invoice</a>
                 </div>
                 {% endif %}

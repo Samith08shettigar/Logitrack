@@ -61,9 +61,9 @@
                     </div>
                     {% endif %}
 
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary w-100"><i class="fa-solid fa-circle-check me-2"></i>Save Customer</button>
-                        <a href="{{ url_for('admin.list_customers') }}" class="btn btn-outline-secondary w-50">Cancel</a>
+                    <div class="d-flex flex-column flex-sm-row gap-2">
+                        <button type="submit" class="btn btn-primary flex-fill py-2 fw-bold"><i class="fa-solid fa-circle-check me-2"></i>Save Customer</button>
+                        <a href="{{ url_for('admin.list_customers') }}" class="btn btn-outline-secondary px-4 py-2">Cancel</a>
                     </div>
                 </form>
             </div>

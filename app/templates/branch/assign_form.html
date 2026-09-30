@@ -43,9 +43,9 @@
                     </div>
                     {% endif %}
 
-                    <div class="d-flex gap-2 mt-4">
-                        <button type="submit" class="btn btn-warning w-100 py-2 fw-bold text-dark"><i class="fa-solid fa-circle-check me-2"></i>Confirm Assignment</button>
-                        <a href="{{ url_for('branch.local_shipments') }}" class="btn btn-outline-secondary w-50">Cancel</a>
+                    <div class="d-flex flex-column flex-sm-row gap-2 mt-4">
+                        <button type="submit" class="btn btn-warning flex-fill py-2 fw-bold text-dark"><i class="fa-solid fa-circle-check me-2"></i>Confirm Assignment</button>
+                        <a href="{{ url_for('branch.local_shipments') }}" class="btn btn-outline-secondary py-2">Cancel</a>
                     </div>
                 </form>
             </div>
