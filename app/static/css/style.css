@@ -83,21 +83,29 @@ body[data-theme="dark"] {
 }
 
 .font-brand {
-    font-family: 'Outfit', 'Inter', sans-serif !important;
+    font-family: 'Outfit', 'Plus Jakarta Sans', 'Inter', sans-serif !important;
 }
 
 .hero-brand-title {
-    font-family: "Copperplate", "Copperplate Gothic Bold", "Copperplate Gothic", "Cinzel", "Outfit", serif, sans-serif !important;
-    font-weight: 700 !important;
-    letter-spacing: 0.04em;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.01em;
     line-height: 1.2;
-    color: #ffffff !important;
+    font-size: clamp(1.65rem, 4.5vw, 2.75rem);
+    color: var(--accent-color, #f59e0b) !important;
 }
 
-.hero-brand-title .brand-highlight {
-    color: var(--accent-light, #fbbf24) !important;
-    background: none !important;
-    -webkit-text-fill-color: var(--accent-light, #fbbf24) !important;
+.hero-track-card {
+    border-radius: 16px;
+    max-width: 580px;
+    margin: 0 auto;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25) !important;
+}
+
+@media (min-width: 992px) {
+    .hero-track-card {
+        margin: 0 auto 0 0;
+    }
 }
 
 /* Fluid Typography Helpers */
