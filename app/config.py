@@ -8,9 +8,11 @@ except ImportError:
 def get_database_uri():
     db_url = os.environ.get('DATABASE_URL')
     if db_url:
-        # Render provides postgres:// which SQLAlchemy 1.4+ requires as postgresql://
+        # Normalize Render and standard PostgreSQL URLs to explicitly use psycopg2 driver
         if db_url.startswith('postgres://'):
-            db_url = db_url.replace('postgres://', 'postgresql://', 1)
+            db_url = db_url.replace('postgres://', 'postgresql+psycopg2://', 1)
+        elif db_url.startswith('postgresql://'):
+            db_url = db_url.replace('postgresql://', 'postgresql+psycopg2://', 1)
         return db_url
     return 'sqlite:///' + os.path.join(os.path.abspath(os.path.dirname(__file__)), 'logitrack.db')
 
