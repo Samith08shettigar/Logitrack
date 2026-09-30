@@ -3,3 +3,4 @@
 set -o errexit
 
 pip install -r requirements.txt
+python migrate_sqlite_to_postgres.py
