@@ -1,0 +1,682 @@
+/* ==========================================================================
+   LogiTrack Global Responsive Stylesheet - Laptop & Mobile Optimized
+   ========================================================================== */
+
+:root {
+    --primary-color: #1e3a8a;
+    --primary-light: #2563eb;
+    --primary-dark: #172554;
+    --secondary-color: #0f172a;
+    --accent-color: #f59e0b;
+    --accent-light: #fbbf24;
+    --success-color: #10b981;
+    --danger-color: #ef4444;
+    --info-color: #06b6d4;
+    
+    --bg-light: #f8fafc;
+    --card-bg-light: #ffffff;
+    --text-color-light: #1e293b;
+    --text-muted-light: #64748b;
+    --border-color-light: #e2e8f0;
+    
+    /* Dark Mode variables */
+    --bg-dark: #0b1120;
+    --card-bg-dark: #1e293b;
+    --text-color-dark: #f8fafc;
+    --text-muted-dark: #94a3b8;
+    --border-color-dark: #334155;
+    
+    /* Layout Dimensions */
+    --sidebar-width: 260px;
+    --top-navbar-height: 64px;
+    --bottom-nav-height: 62px;
+    --transition-speed: 0.28s;
+    --transition-ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Base Resets & Global Typography */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-color-light);
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    overflow-x: hidden;
+}
+
+body[data-theme="dark"] {
+    background-color: var(--bg-dark);
+    color: var(--text-color-dark);
+}
+
+.font-brand {
+    font-family: 'Outfit', 'Inter', sans-serif !important;
+}
+
+/* Auth Pages Background Gradient */
+.auth-bg {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, #1e3a8a 50%, var(--primary-light) 100%);
+    min-height: 100vh;
+}
+
+/* Glassmorphism card */
+.glass-card {
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 10px 30px 0 rgba(15, 23, 42, 0.12);
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+    transition: transform var(--transition-speed) var(--transition-ease);
+}
+
+body[data-theme="dark"] .glass-card {
+    background: rgba(30, 41, 59, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 10px 30px 0 rgba(0, 0, 0, 0.4);
+}
+
+/* ==========================================================================
+   Dashboard Main Container & Sidebar (Laptop & Mobile Drawer)
+   ========================================================================== */
+
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+}
+
+/* Sidebar navigation - Desktop */
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--primary-dark);
+    color: #ffffff;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 1040;
+    overflow-y: auto;
+    transition: transform var(--transition-speed) var(--transition-ease), width var(--transition-speed);
+}
+
+.sidebar-header {
+    background-color: rgba(0, 0, 0, 0.25);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: var(--top-navbar-height);
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.sidebar-menu-item a {
+    display: flex;
+    align-items: center;
+    padding: 11px 20px;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    font-size: 0.92rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border-left: 4px solid transparent;
+}
+
+.sidebar-menu-item a:hover,
+.sidebar-menu-item.active a {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-left-color: var(--accent-color);
+}
+
+.sidebar-menu-item a i {
+    width: 24px;
+    font-size: 1.05rem;
+    margin-right: 12px;
+    display: flex;
+    justify-content: center;
+}
+
+/* Main Dashboard content layout */
+.main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow-x: hidden;
+    background-color: var(--bg-light);
+    transition: background-color var(--transition-speed);
+}
+
+body[data-theme="dark"] .main-content {
+    background-color: var(--bg-dark);
+}
+
+.top-navbar {
+    background-color: var(--card-bg-light);
+    border-bottom: 1px solid var(--border-color-light);
+    padding: 0.75rem 1.5rem;
+    min-height: var(--top-navbar-height);
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+    backdrop-filter: blur(8px);
+    transition: background-color var(--transition-speed), border-color var(--transition-speed);
+}
+
+body[data-theme="dark"] .top-navbar {
+    background-color: var(--card-bg-dark);
+    border-bottom: 1px solid var(--border-color-dark);
+}
+
+.sidebar-toggle-btn {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+}
+
+.brand-text-nav {
+    color: var(--text-color-light);
+}
+
+body[data-theme="dark"] .brand-text-nav {
+    color: var(--text-color-dark);
+}
+
+/* ==========================================================================
+   Mobile Sidebar Drawer & Backdrop Overlay (< 992px)
+   ========================================================================== */
+
+.sidebar-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 1045;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-backdrop.active {
+    display: block;
+    opacity: 1;
+}
+
+@media (max-width: 991.98px) {
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        height: 100%;
+        width: 280px;
+        max-width: 85vw;
+        transform: translateX(-100%);
+        box-shadow: none;
+        z-index: 1050;
+        background-color: #0d1527;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.4);
+    }
+
+    body.drawer-open {
+        overflow: hidden;
+    }
+
+    .top-navbar {
+        padding: 0.6rem 1rem;
+    }
+}
+
+/* ==========================================================================
+   Mobile Quick Bottom Navigation Bar (< 992px)
+   ========================================================================== */
+
+.mobile-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: var(--bottom-nav-height);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border-color-light);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 1030;
+    padding: 0 4px;
+    box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.04);
+}
+
+body[data-theme="dark"] .mobile-bottom-nav {
+    background: rgba(30, 41, 59, 0.95);
+    border-top: 1px solid var(--border-color-dark);
+    box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.25);
+}
+
+.bottom-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: var(--text-muted-light);
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 6px 8px;
+    border-radius: 8px;
+    flex: 1;
+    min-width: 0;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+body[data-theme="dark"] .bottom-nav-item {
+    color: var(--text-muted-dark);
+}
+
+.bottom-nav-item i {
+    font-size: 1.15rem;
+    margin-bottom: 2px;
+    transition: transform 0.2s ease;
+}
+
+.bottom-nav-item span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.bottom-nav-item:hover,
+.bottom-nav-item.active {
+    color: var(--primary-light);
+}
+
+.bottom-nav-item.active i {
+    transform: translateY(-2px);
+    color: var(--primary-light);
+}
+
+body[data-theme="dark"] .bottom-nav-item.active {
+    color: #60a5fa;
+}
+
+body[data-theme="dark"] .bottom-nav-item.active i {
+    color: #60a5fa;
+}
+
+/* Space padding at bottom of main content on mobile so nothing gets hidden behind bottom nav */
+@media (max-width: 991.98px) {
+    .content-wrapper {
+        padding-bottom: 75px !important;
+    }
+}
+
+/* ==========================================================================
+   Card customizations & KPI Metrics
+   ========================================================================== */
+
+.kpi-card {
+    border: none;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    background-color: var(--card-bg-light);
+    transition: transform var(--transition-speed) var(--transition-ease), box-shadow var(--transition-speed) var(--transition-ease), background-color var(--transition-speed);
+}
+
+body[data-theme="dark"] .kpi-card {
+    background-color: var(--card-bg-dark);
+    box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.3);
+}
+
+.kpi-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+}
+
+.kpi-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    flex-shrink: 0;
+}
+
+@media (max-width: 576px) {
+    .kpi-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 1.15rem;
+    }
+}
+
+/* ==========================================================================
+   Responsive Tables & Data Grids
+   ========================================================================== */
+
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 12px;
+}
+
+.custom-table {
+    color: inherit;
+    margin-bottom: 0;
+    width: 100%;
+}
+
+.custom-table th {
+    background-color: rgba(0, 0, 0, 0.02);
+    color: var(--text-muted-light);
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 12px 14px;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--border-color-light);
+}
+
+body[data-theme="dark"] .custom-table th {
+    background-color: rgba(255, 255, 255, 0.03);
+    color: var(--text-muted-dark);
+    border-bottom-color: var(--border-color-dark);
+}
+
+.custom-table td {
+    padding: 12px 14px;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-color-light);
+    font-size: 0.88rem;
+}
+
+body[data-theme="dark"] .custom-table td {
+    border-bottom-color: var(--border-color-dark);
+}
+
+/* Status badging */
+.badge-status {
+    padding: 5px 10px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+/* Custom styling for status badge colors */
+.status-booked { background-color: #eff6ff; color: #1d4ed8; }
+.status-payment-pending { background-color: #fffbeb; color: #b45309; }
+.status-confirmed { background-color: #f0fdf4; color: #15803d; }
+.status-branch-assigned { background-color: #fdf2f8; color: #be185d; }
+.status-driver-assigned { background-color: #faf5ff; color: #7e22ce; }
+.status-picked-up { background-color: #ecfeff; color: #0e7490; }
+.status-warehouse { background-color: #f1f5f9; color: #334155; }
+.status-in-transit { background-color: #e0f2fe; color: #0369a1; }
+.status-out-for-delivery { background-color: #f0fdfa; color: #0f766e; }
+.status-delivered, .status-completed { background-color: #dcfce7; color: #166534; }
+.status-cancelled { background-color: #fee2e2; color: #991b1b; }
+.status-returned { background-color: #ffedd5; color: #c2410c; }
+.status-failed-delivery { background-color: #fef2f2; color: #991b1b; }
+
+/* Dark mode badge adjustments */
+body[data-theme="dark"] .status-booked { background-color: rgba(29, 78, 216, 0.2); color: #93c5fd; }
+body[data-theme="dark"] .status-payment-pending { background-color: rgba(180, 83, 9, 0.2); color: #fcd34d; }
+body[data-theme="dark"] .status-confirmed { background-color: rgba(21, 128, 61, 0.2); color: #86efac; }
+body[data-theme="dark"] .status-branch-assigned { background-color: rgba(190, 24, 93, 0.2); color: #f472b6; }
+body[data-theme="dark"] .status-driver-assigned { background-color: rgba(126, 34, 206, 0.2); color: #c084fc; }
+body[data-theme="dark"] .status-picked-up { background-color: rgba(14, 116, 144, 0.2); color: #67e8f9; }
+body[data-theme="dark"] .status-warehouse { background-color: rgba(51, 65, 85, 0.4); color: #cbd5e1; }
+body[data-theme="dark"] .status-in-transit { background-color: rgba(3, 105, 161, 0.2); color: #7dd3fc; }
+body[data-theme="dark"] .status-out-for-delivery { background-color: rgba(15, 118, 110, 0.2); color: #5eead4; }
+body[data-theme="dark"] .status-delivered,
+body[data-theme="dark"] .status-completed { background-color: rgba(22, 101, 52, 0.25); color: #86efac; }
+body[data-theme="dark"] .status-cancelled { background-color: rgba(153, 27, 27, 0.25); color: #fca5a5; }
+
+/* ==========================================================================
+   Responsive Forms, Inputs & Controls
+   ========================================================================== */
+
+.form-control, .form-select {
+    background-color: var(--card-bg-light);
+    color: var(--text-color-light);
+    border: 1px solid var(--border-color-light);
+    border-radius: 8px;
+    font-size: 0.92rem;
+    padding: 0.55rem 0.75rem;
+}
+
+/* Prevent auto-zoom on mobile iOS Safari */
+@media (max-width: 768px) {
+    .form-control, .form-select, input, select, textarea {
+        font-size: 16px !important;
+    }
+}
+
+body[data-theme="dark"] .form-control, 
+body[data-theme="dark"] .form-select {
+    background-color: #131d31;
+    color: var(--text-color-dark);
+    border: 1px solid var(--border-color-dark);
+}
+
+body[data-theme="dark"] .form-control:focus, 
+body[data-theme="dark"] .form-select:focus {
+    background-color: #131d31;
+    color: var(--text-color-dark);
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.2);
+}
+
+body[data-theme="dark"] .input-group-text {
+    background-color: #1e293b;
+    border-color: var(--border-color-dark);
+    color: var(--text-muted-dark);
+}
+
+/* Touch-friendly switches & checkboxes */
+.form-check-input {
+    cursor: pointer;
+    min-width: 1.2em;
+    min-height: 1.2em;
+}
+
+/* ==========================================================================
+   Tracking Map & Route Sidebars (Laptop vs Mobile Adaptations)
+   ========================================================================== */
+
+.map-container {
+    height: 520px;
+    border-radius: 18px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid var(--border-color-light);
+}
+
+@media (max-width: 991.98px) {
+    .map-container {
+        height: 360px !important;
+    }
+    
+    /* On mobile, route-sidebar transforms to full width under map or inside card */
+    .route-sidebar {
+        position: static !important;
+        width: 100% !important;
+        height: auto !important;
+        margin-top: 1rem !important;
+        border-radius: 16px !important;
+    }
+    
+    .map-title-overlay {
+        left: 12px !important;
+        top: 12px !important;
+        padding: 8px 14px !important;
+        border-radius: 14px !important;
+    }
+    
+    .map-live-badge {
+        right: 12px !important;
+        top: 12px !important;
+        padding: 6px 12px !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .map-container {
+        height: 280px !important;
+    }
+}
+
+/* ==========================================================================
+   Responsive Steppers & Progress Bars
+   ========================================================================== */
+
+.stepper-container {
+    padding: 10px 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 768px) {
+    .stepper-container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 4px;
+    }
+    
+    .stepper-container .step-item {
+        min-width: 68px;
+        flex-shrink: 0;
+    }
+    
+    .stepper-container .step-circle {
+        width: 32px !important;
+        height: 32px !important;
+        font-size: 0.8rem !important;
+    }
+    
+    .stepper-container .step-line {
+        min-width: 20px;
+        margin: 0 -4px !important;
+    }
+}
+
+/* ==========================================================================
+   Signature Pad Canvas Touch Responsiveness
+   ========================================================================== */
+
+#sig-canvas, #pickup-sig-canvas {
+    border: 2px dashed #cbd5e1;
+    border-radius: 8px;
+    cursor: crosshair;
+    background-color: #ffffff;
+    max-width: 100%;
+    touch-action: none;
+}
+
+body[data-theme="dark"] #sig-canvas,
+body[data-theme="dark"] #pickup-sig-canvas {
+    border-color: #475569;
+    background-color: #1e293b;
+}
+
+/* ==========================================================================
+   Public Navigation, Hero Banner, & Footer
+   ========================================================================== */
+
+.public-navbar {
+    background-color: #0b1120 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.public-navbar .nav-link {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.public-navbar .nav-link:hover {
+    color: var(--accent-color) !important;
+}
+
+.footer {
+    margin-top: auto;
+    background-color: #0b1120;
+    color: rgba(255, 255, 255, 0.6);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ==========================================================================
+   Utility Helpers & Micro-animations
+   ========================================================================== */
+
+.hover-white:hover {
+    color: #ffffff !important;
+}
+
+.hover-grow {
+    transition: transform var(--transition-speed) var(--transition-ease), box-shadow var(--transition-speed);
+}
+
+.hover-grow:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Custom sleek scrollbars */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+body[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: #475569;
+}

@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>{% block title %}LogiTrack - Smart Logistics Management{% endblock %}</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Leaflet Map CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body data-theme="light">
+
+    <!-- Global Toast Container for System Alerts -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100;">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="toast align-items-center text-white bg-{{ 'danger' if category == 'error' or category == 'danger' else ('warning' if category == 'warning' else 'success') }} border-0 show shadow" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="4000">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <i class="fa-solid fa-bell me-2"></i> {{ message }}
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    {% if current_user %}
+    <!-- Dashboard Panel Layout -->
+    <div class="dashboard-container">
+        <!-- Mobile Sidebar Backdrop Overlay -->
+        <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+        <!-- Sidebar Navigation (Responsive Desktop & Mobile Drawer) -->
+        <aside class="sidebar" id="app-sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="text-white text-decoration-none d-flex align-items-center">
+                    <i class="fa-solid fa-truck-ramp-box fa-lg me-2 text-warning"></i>
+                    <span class="fs-5 fw-bold font-brand">LogiTrack</span>
+                </a>
+                <!-- Mobile Close Button -->
+                <button class="btn btn-link text-white-50 d-lg-none p-1 border-0 fs-5" id="sidebar-close-btn" type="button" aria-label="Close Navigation">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <div class="sidebar-user-badge d-lg-none px-3 py-2 my-2 mx-3 rounded bg-white bg-opacity-10 d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-circle-user text-warning fa-lg"></i>
+                    <div>
+                        <div class="small fw-bold text-white lh-1">{{ current_user.username }}</div>
+                        <span class="text-white-50" style="font-size: 0.65rem;">{{ current_user.role.name }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <ul class="sidebar-menu mt-2">
+                {% if current_user.role.name == 'Administrator' %}
+                    <li class="sidebar-menu-item {% if request.endpoint == 'admin.dashboard' %}active{% endif %}">
+                        <a href="{{ url_for('admin.dashboard') }}"><i class="fa-solid fa-chart-pie"></i><span>Overview</span></a>
+                    </li>
+                    <li class="sidebar-menu-item {% if 'shipments' in request.endpoint %}active{% endif %}">
+                        <a href="{{ url_for('admin.list_shipments') }}"><i class="fa-solid fa-cubes"></i><span>Shipments</span></a>
+                    </li>
+                    <li class="sidebar-menu-item {% if 'customers' in request.endpoint %}active{% endif %}">
+                        <a href="{{ url_for('admin.list_customers') }}"><i class="fa-solid fa-user-group"></i><span>Customers</span></a>
+                    </li>
+                    <li class="sidebar-menu-item {% if 'drivers' in request.endpoint %}active{% endif %}">
+                        <a href="{{ url_for('admin.list_drivers') }}"><i class="fa-solid fa-id-badge"></i><span>Drivers</span></a>
+                    </li>
+                    <li class="sidebar-menu-item {% if 'vehicles' in request.endpoint %}active{% endif %}">
+                        <a href="{{ url_for('admin.list_vehicles') }}"><i class="fa-solid fa-truck-monster"></i><span>Fleet Vehicles</span></a>
+                    </li>
+                    <li class="sidebar-menu-item {% if 'branches' in request.endpoint %}active{% endif %}">
+                        <a href="{{ url_for('admin.list_branches') }}"><i class="fa-solid fa-warehouse"></i><span>Branches</span></a>
+                    </li>
+                    <li class="sidebar-menu-item {% if 'employees' in request.endpoint %}active{% endif %}">
+                        <a href="{{ url_for('admin.list_employees') }}"><i class="fa-solid fa-users-gear"></i><span>Staff Manage</span></a>
+                    </li>
+                    <li class="sidebar-menu-item {% if 'payments' in request.endpoint %}active{% endif %}">
+                        <a href="{{ url_for('admin.list_payments') }}"><i class="fa-solid fa-file-invoice-dollar"></i><span>Payments</span></a>
+                    </li>
+                    <li class="sidebar-menu-item {% if 'feedback' in request.endpoint %}active{% endif %}">
+                        <a href="{{ url_for('admin.list_feedback') }}"><i class="fa-solid fa-comments"></i><span>Reviews</span></a>
+                    </li>
+                    <li class="sidebar-menu-item {% if 'reports' in request.endpoint %}active{% endif %}">
+                        <a href="{{ url_for('reports.index') }}"><i class="fa-solid fa-chart-line"></i><span>Reports Panel</span></a>
+                    </li>
+                    <li class="sidebar-menu-item {% if 'settings' in request.endpoint %}active{% endif %}">
+                        <a href="{{ url_for('admin.system_settings') }}"><i class="fa-solid fa-sliders"></i><span>System Config</span></a>
+                    </li>
+                {% elif current_user.role.name == 'Customer' %}
+                    <li class="sidebar-menu-item {% if request.endpoint == 'customer.dashboard' %}active{% endif %}">
+                        <a href="{{ url_for('customer.dashboard') }}"><i class="fa-solid fa-gauge-high"></i><span>Dashboard</span></a>
+                    </li>
+                    <li class="sidebar-menu-item {% if request.endpoint == 'customer.book_shipment' %}active{% endif %}">
+                        <a href="{{ url_for('customer.book_shipment') }}"><i class="fa-solid fa-calendar-plus"></i><span>Book Shipment</span></a>
+                    </li>
+                    <li class="sidebar-menu-item {% if request.endpoint in ['customer.shipment_history'] %}active{% endif %}">
+                        <a href="{{ url_for('customer.shipment_history') }}"><i class="fa-solid fa-clock-rotate-left"></i><span>Shipment History</span></a>
+                    </li>
+                    <li class="sidebar-menu-item {% if request.endpoint == 'customer.public_track' %}active{% endif %}">
+                        <a href="{{ url_for('customer.public_track') }}"><i class="fa-solid fa-magnifying-glass-location"></i><span>Track Package</span></a>
+                    </li>
+                    <li class="sidebar-menu-item {% if request.endpoint == 'customer.list_addresses' %}active{% endif %}">
+                        <a href="{{ url_for('customer.list_addresses') }}"><i class="fa-solid fa-map-location-dot"></i><span>Saved Addresses</span></a>
+                    </li>
+                    <li class="sidebar-menu-item {% if request.endpoint == 'auth.profile' %}active{% endif %}">
+                        <a href="{{ url_for('auth.profile') }}"><i class="fa-solid fa-user-gear"></i><span>My Profile</span></a>
+                    </li>
+                {% elif current_user.role.name == 'Driver' %}
+                    <li class="sidebar-menu-item {% if request.endpoint == 'driver.dashboard' %}active{% endif %}">
+                        <a href="{{ url_for('driver.dashboard') }}"><i class="fa-solid fa-road-barrier"></i><span>Active Runs</span></a>
+                    </li>
+                    <li class="sidebar-menu-item {% if request.endpoint == 'driver.history' %}active{% endif %}">
+                        <a href="{{ url_for('driver.history') }}"><i class="fa-solid fa-clock-rotate-left"></i><span>Run History</span></a>
+                    </li>
+                    <li class="sidebar-menu-item {% if request.endpoint == 'auth.profile' %}active{% endif %}">
+                        <a href="{{ url_for('auth.profile') }}"><i class="fa-solid fa-user-check"></i><span>My Profile</span></a>
+                    </li>
+                {% elif current_user.role.name == 'Branch Manager' %}
+                    <li class="sidebar-menu-item {% if request.endpoint == 'branch.dashboard' %}active{% endif %}">
+                        <a href="{{ url_for('branch.dashboard') }}"><i class="fa-solid fa-industry"></i><span>Overview</span></a>
+                    </li>
+                    <li class="sidebar-menu-item {% if request.endpoint == 'branch.local_shipments' %}active{% endif %}">
+                        <a href="{{ url_for('branch.local_shipments') }}"><i class="fa-solid fa-truck-loading"></i><span>Branch Orders</span></a>
+                    </li>
+                    <li class="sidebar-menu-item {% if 'container' in request.endpoint %}active{% endif %}">
+                        <a href="{{ url_for('branch.list_containers') }}"><i class="fa-solid fa-boxes-packing"></i><span>Containers Hub</span></a>
+                    </li>
+                    <li class="sidebar-menu-item {% if request.endpoint == 'branch.branch_records' %}active{% endif %}">
+                        <a href="{{ url_for('branch.branch_records') }}"><i class="fa-solid fa-clipboard-check"></i><span>Branch Records</span></a>
+                    </li>
+                    <li class="sidebar-menu-item {% if request.endpoint == 'branch.list_employees' %}active{% endif %}">
+                        <a href="{{ url_for('branch.list_employees') }}"><i class="fa-solid fa-users"></i><span>Branch Drivers</span></a>
+                    </li>
+                    <li class="sidebar-menu-item {% if request.endpoint == 'branch.reports' %}active{% endif %}">
+                        <a href="{{ url_for('branch.reports') }}"><i class="fa-solid fa-clipboard-list"></i><span>Branch Stats</span></a>
+                    </li>
+                    <li class="sidebar-menu-item {% if request.endpoint == 'auth.profile' %}active{% endif %}">
+                        <a href="{{ url_for('auth.profile') }}"><i class="fa-solid fa-circle-user"></i><span>My Profile</span></a>
+                    </li>
+                {% endif %}
+                
+                <li class="sidebar-menu-item mt-3 pt-2 border-top border-secondary border-opacity-25">
+                    <a href="{{ url_for('auth.logout') }}" class="text-danger"><i class="fa-solid fa-power-off text-danger"></i><span>Sign Out</span></a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Dashboard View Container -->
+        <main class="main-content">
+            <!-- Top Dashboard Navbar -->
+            <header class="top-navbar d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-2">
+                    <!-- Mobile Hamburger Button to Toggle Drawer -->
+                    <button class="btn btn-outline-secondary btn-sm d-lg-none sidebar-toggle-btn" id="sidebar-toggle-btn" type="button" aria-label="Open Navigation">
+                        <i class="fa-solid fa-bars fa-lg"></i>
+                    </button>
+                    
+                    <a href="/" class="d-flex align-items-center text-decoration-none d-lg-none me-2">
+                        <i class="fa-solid fa-truck-ramp-box text-warning me-1"></i>
+                        <span class="fw-bold fs-6 brand-text-nav">LogiTrack</span>
+                    </a>
+
+                    <div>
+                        <h5 class="mb-0 fw-bold d-none d-sm-block">Welcome back, <span class="text-primary">{{ current_user.username }}</span></h5>
+                        <small class="text-muted d-none d-md-block">Role Privilege: <span class="badge bg-secondary">{{ current_user.role.name }}</span></small>
+                    </div>
+                </div>
+                
+                <div class="d-flex align-items-center gap-2 gap-sm-3">
+                    <!-- Theme Toggle Switch -->
+                    <button class="btn btn-outline-secondary btn-sm" id="theme-toggle" title="Switch Theme" aria-label="Switch Theme">
+                        <i class="fa-solid fa-moon" id="theme-icon"></i>
+                    </button>
+                    
+                    <!-- Notifications Dropdown -->
+                    <div class="dropdown">
+                        <button class="btn btn-light position-relative btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notifications">
+                            <i class="fa-regular fa-bell"></i>
+                            {% if current_user.notifications and current_user.notifications|selectattr("is_read", "equalto", False)|list|length > 0 %}
+                                <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
+                            {% endif %}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end p-2 responsive-dropdown-menu" style="width: min(320px, calc(100vw - 32px)); max-height: 380px; overflow-y: auto;">
+                            <li><h6 class="dropdown-header fw-bold text-primary">System Notifications</h6></li>
+                            {% if current_user.notifications %}
+                                {% for notif in current_user.notifications|reverse %}
+                                    <li>
+                                        <div class="dropdown-item p-2 rounded mb-1 {% if not notif.is_read %}bg-light border-start border-primary border-3{% else %}border-bottom{% endif %}">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <strong class="text-{{ notif.type or 'info' }} small">{{ notif.title }}</strong>
+                                                <small class="text-muted" style="font-size: 0.65rem;">{{ notif.created_at.strftime('%m-%d %H:%M') }}</small>
+                                            </div>
+                                            <p class="mb-0 text-wrap small text-secondary" style="font-size: 0.75rem;">{{ notif.message }}</p>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            {% else: %}
+                                <li><p class="dropdown-item text-center text-muted small py-3">No notifications</p></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    
+                    <!-- User Settings dropdown -->
+                    <div class="dropdown">
+                        <button class="btn btn-primary btn-sm dropdown-toggle d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-solid fa-circle-user"></i>
+                            <span class="d-none d-sm-inline">{{ current_user.username }}</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow">
+                            <li class="px-3 py-2 border-bottom d-sm-none">
+                                <div class="fw-bold small">{{ current_user.username }}</div>
+                                <span class="badge bg-secondary" style="font-size: 0.65rem;">{{ current_user.role.name }}</span>
+                            </li>
+                            <li><a class="dropdown-item" href="{{ url_for('auth.profile') }}"><i class="fa-solid fa-gears me-2 text-primary"></i>Account Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}"><i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Sign Out</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Inner Page Content block with Responsive Padding -->
+            <div class="content-wrapper container-fluid p-2 p-sm-3 p-lg-4">
+                {% block content %}{% endblock %}
+            </div>
+
+            <!-- Mobile Quick Bottom Navigation Bar -->
+            <nav class="mobile-bottom-nav d-lg-none" aria-label="Mobile Navigation">
+                {% if current_user.role.name == 'Customer' %}
+                    <a href="{{ url_for('customer.dashboard') }}" class="bottom-nav-item {% if request.endpoint == 'customer.dashboard' %}active{% endif %}">
+                        <i class="fa-solid fa-gauge-high"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="{{ url_for('customer.book_shipment') }}" class="bottom-nav-item {% if request.endpoint == 'customer.book_shipment' %}active{% endif %}">
+                        <i class="fa-solid fa-calendar-plus"></i>
+                        <span>Book</span>
+                    </a>
+                    <a href="{{ url_for('customer.public_track') }}" class="bottom-nav-item {% if request.endpoint == 'customer.public_track' %}active{% endif %}">
+                        <i class="fa-solid fa-magnifying-glass-location"></i>
+                        <span>Track</span>
+                    </a>
+                    <a href="{{ url_for('customer.shipment_history') }}" class="bottom-nav-item {% if request.endpoint == 'customer.shipment_history' %}active{% endif %}">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                        <span>History</span>
+                    </a>
+                    <a href="{{ url_for('auth.profile') }}" class="bottom-nav-item {% if request.endpoint == 'auth.profile' %}active{% endif %}">
+                        <i class="fa-solid fa-user-gear"></i>
+                        <span>Profile</span>
+                    </a>
+                {% elif current_user.role.name == 'Administrator' %}
+                    <a href="{{ url_for('admin.dashboard') }}" class="bottom-nav-item {% if request.endpoint == 'admin.dashboard' %}active{% endif %}">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        <span>Overview</span>
+                    </a>
+                    <a href="{{ url_for('admin.list_shipments') }}" class="bottom-nav-item {% if 'shipments' in request.endpoint %}active{% endif %}">
+                        <i class="fa-solid fa-cubes"></i>
+                        <span>Shipments</span>
+                    </a>
+                    <a href="{{ url_for('reports.index') }}" class="bottom-nav-item {% if 'reports' in request.endpoint %}active{% endif %}">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span>Reports</span>
+                    </a>
+                    <a href="javascript:void(0)" class="bottom-nav-item mobile-menu-trigger" onclick="toggleSidebarDrawer()">
+                        <i class="fa-solid fa-bars"></i>
+                        <span>Menu</span>
+                    </a>
+                {% elif current_user.role.name == 'Driver' %}
+                    <a href="{{ url_for('driver.dashboard') }}" class="bottom-nav-item {% if request.endpoint == 'driver.dashboard' %}active{% endif %}">
+                        <i class="fa-solid fa-road-barrier"></i>
+                        <span>Runs</span>
+                    </a>
+                    <a href="{{ url_for('driver.history') }}" class="bottom-nav-item {% if request.endpoint == 'driver.history' %}active{% endif %}">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                        <span>History</span>
+                    </a>
+                    <a href="{{ url_for('auth.profile') }}" class="bottom-nav-item {% if request.endpoint == 'auth.profile' %}active{% endif %}">
+                        <i class="fa-solid fa-user-check"></i>
+                        <span>Profile</span>
+                    </a>
+                    <a href="javascript:void(0)" class="bottom-nav-item mobile-menu-trigger" onclick="toggleSidebarDrawer()">
+                        <i class="fa-solid fa-bars"></i>
+                        <span>Menu</span>
+                    </a>
+                {% elif current_user.role.name == 'Branch Manager' %}
+                    <a href="{{ url_for('branch.dashboard') }}" class="bottom-nav-item {% if request.endpoint == 'branch.dashboard' %}active{% endif %}">
+                        <i class="fa-solid fa-industry"></i>
+                        <span>Overview</span>
+                    </a>
+                    <a href="{{ url_for('branch.local_shipments') }}" class="bottom-nav-item {% if request.endpoint == 'branch.local_shipments' %}active{% endif %}">
+                        <i class="fa-solid fa-truck-loading"></i>
+                        <span>Orders</span>
+                    </a>
+                    <a href="{{ url_for('branch.list_containers') }}" class="bottom-nav-item {% if 'container' in request.endpoint %}active{% endif %}">
+                        <i class="fa-solid fa-boxes-packing"></i>
+                        <span>Containers</span>
+                    </a>
+                    <a href="javascript:void(0)" class="bottom-nav-item mobile-menu-trigger" onclick="toggleSidebarDrawer()">
+                        <i class="fa-solid fa-bars"></i>
+                        <span>More</span>
+                    </a>
+                {% endif %}
+            </nav>
+        </main>
+    </div>
+
+    {% else %}
+    <!-- Public Header & Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3 sticky-top public-navbar shadow-sm">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center fw-bold font-brand" href="/">
+                <i class="fa-solid fa-truck-ramp-box fa-lg me-2 text-warning"></i> LogiTrack
+            </a>
+            <!-- Fixed Bootstrap Navbar Toggler with proper data-bs-toggle -->
+            <button class="navbar-toggler border-0 shadow-none p-2" type="button" data-bs-toggle="collapse" data-bs-target="#public-nav" aria-controls="public-nav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="public-nav">
+                <ul class="navbar-nav ms-auto gap-2 mt-3 mt-lg-0 align-items-lg-center">
+                    <li class="nav-item">
+                        <a class="nav-link py-2 px-3 rounded hover-bg" href="/"><i class="fa-solid fa-house me-1"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link py-2 px-3 rounded hover-bg" href="{{ url_for('customer.public_track') }}"><i class="fa-solid fa-magnifying-glass-location me-1"></i> Track Parcel</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-warning text-white btn-sm px-3 w-100 w-lg-auto my-1 my-lg-0" href="{{ url_for('auth.login') }}"><i class="fa-solid fa-right-to-bracket me-1"></i> Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-warning btn-sm px-3 w-100 w-lg-auto fw-bold text-dark my-1 my-lg-0" href="{{ url_for('auth.register') }}"><i class="fa-solid fa-user-plus me-1"></i> Signup</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Public Main Container -->
+    <main class="flex-shrink-0">
+        {% block public_content %}{% endblock %}
+    </main>
+
+    <!-- Public Footer -->
+    <footer class="footer py-4 mt-auto">
+        <div class="container text-center">
+            <span class="small">&copy; 2026 LogiTrack Logistics Services Ltd. All Rights Reserved.</span>
+        </div>
+    </footer>
+    {% endif %}
+
+    <!-- Leaflet Maps JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- Bootstrap 5 bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Theme Toggle, Mobile Drawer, & Interactions Script -->
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const bodyEl = document.body;
+        
+        // Load theme preferences
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        bodyEl.setAttribute('data-theme', savedTheme);
+        updateThemeIcon(savedTheme);
+        
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = bodyEl.getAttribute('data-theme');
+                const nextTheme = currentTheme === 'light' ? 'dark' : 'light';
+                bodyEl.setAttribute('data-theme', nextTheme);
+                localStorage.setItem('theme', nextTheme);
+                updateThemeIcon(nextTheme);
+            });
+        }
+        
+        function updateThemeIcon(theme) {
+            if (!themeIcon) return;
+            if (theme === 'dark') {
+                themeIcon.className = 'fa-solid fa-sun';
+            } else {
+                themeIcon.className = 'fa-solid fa-moon';
+            }
+        }
+
+        // Mobile Sidebar Drawer Controller
+        const appSidebar = document.getElementById('app-sidebar');
+        const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+        const sidebarToggleBtn = document.getElementById('sidebar-toggle-btn');
+        const sidebarCloseBtn = document.getElementById('sidebar-close-btn');
+
+        function openSidebarDrawer() {
+            if (appSidebar) appSidebar.classList.add('open');
+            if (sidebarBackdrop) sidebarBackdrop.classList.add('active');
+            document.body.classList.add('drawer-open');
+        }
+
+        function closeSidebarDrawer() {
+            if (appSidebar) appSidebar.classList.remove('open');
+            if (sidebarBackdrop) sidebarBackdrop.classList.remove('active');
+            document.body.classList.remove('drawer-open');
+        }
+
+        function toggleSidebarDrawer() {
+            if (appSidebar && appSidebar.classList.contains('open')) {
+                closeSidebarDrawer();
+            } else {
+                openSidebarDrawer();
+            }
+        }
+
+        window.openSidebarDrawer = openSidebarDrawer;
+        window.closeSidebarDrawer = closeSidebarDrawer;
+        window.toggleSidebarDrawer = toggleSidebarDrawer;
+
+        if (sidebarToggleBtn) {
+            sidebarToggleBtn.addEventListener('click', toggleSidebarDrawer);
+        }
+        if (sidebarCloseBtn) {
+            sidebarCloseBtn.addEventListener('click', closeSidebarDrawer);
+        }
+        if (sidebarBackdrop) {
+            sidebarBackdrop.addEventListener('click', closeSidebarDrawer);
+        }
+
+        // Close mobile sidebar on link click or Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && appSidebar && appSidebar.classList.contains('open')) {
+                closeSidebarDrawer();
+            }
+        });
+
+        if (appSidebar) {
+            const menuLinks = appSidebar.querySelectorAll('.sidebar-menu-item a');
+            menuLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth < 992) {
+                        closeSidebarDrawer();
+                    }
+                });
+            });
+        }
+
+        // Initialize autohide for toasts
+        document.addEventListener('DOMContentLoaded', () => {
+            const toastElList = document.querySelectorAll('.toast');
+            toastElList.forEach(toastEl => {
+                const toast = new bootstrap.Toast(toastEl, { autohide: true, delay: 5000 });
+                toast.show();
+            });
+        });
+
+        // Global Password Visibility Toggle
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (!input || !icon) return;
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
