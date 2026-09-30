@@ -4,7 +4,7 @@ import os
 from flask import render_template, request, redirect, url_for, flash, g, send_from_directory, current_app
 from sqlalchemy import func
 from app.models import db, User, Customer, Shipment, ShipmentHistory, TrackingLog, Address, Payment, Invoice, Feedback, Notification, Branch
-from app.utils import login_required, role_required, log_activity, create_notification, calculate_shipping_cost, generate_qr_code, generate_barcode_img, create_invoice_pdf, validate_phone
+from app.utils import login_required, role_required, log_activity, create_notification, calculate_shipping_cost, generate_qr_code, generate_barcode_img, create_invoice_pdf, validate_phone, ensure_shipment_media
 from . import customer_bp
 
 @customer_bp.route('/dashboard')
@@ -466,6 +466,12 @@ def public_track():
         tracking_number = tracking_number.strip()
         shipment = Shipment.query.filter(Shipment.tracking_number.ilike(tracking_number)).first()
         if shipment:
+            ensure_shipment_media(shipment)
+            try:
+                db.session.commit()
+            except Exception:
+                db.session.rollback()
+
             tracking_logs = TrackingLog.query.filter_by(shipment_id=shipment.id).order_by(TrackingLog.update_time.desc()).all()
             pickup_img = get_city_image(shipment.pickup_city, shipment.pickup_state)
             receiver_img = get_city_image(shipment.receiver_city, shipment.receiver_state)
@@ -535,23 +541,22 @@ def public_track():
 
 # --- DOWNLOAD INVOICE ---
 @customer_bp.route('/invoice/<tracking_number>')
-@login_required
-@role_required('Customer', 'Administrator', 'Branch Manager')
 def download_invoice(tracking_number):
     shipment = Shipment.query.filter_by(tracking_number=tracking_number).first()
     if not shipment:
-        flash("Invoice not found.", "danger")
-        return redirect(url_for('customer.dashboard'))
+        flash("Invoice not found for this tracking number.", "danger")
+        return redirect(url_for('customer.dashboard') if g.user else url_for('customer.public_track'))
         
-    if shipment.status in ['Booked', 'Payment Pending', 'Confirmed', 'Branch Assigned'] and g.user.role.name == 'Customer':
-        flash("Invoice is not available yet. It will be generated after the courier agent weighs the package, collects your signature, and picks up the item.", "warning")
-        return redirect(url_for('customer.dashboard'))
-        
-    filename = f"invoice_{shipment.tracking_number}.pdf"
+    ensure_shipment_media(shipment)
     directory = os.path.join(current_app.config['UPLOAD_FOLDER'], 'invoices')
+    os.makedirs(directory, exist_ok=True)
+    filename = f"invoice_{shipment.tracking_number}.pdf"
     
     # Always generate fresh up-to-date PDF with latest signatures, weight recalculations & payments
-    create_invoice_pdf(shipment)
+    try:
+        create_invoice_pdf(shipment)
+    except Exception as e:
+        current_app.logger.error(f"Error generating invoice PDF: {e}")
         
     return send_from_directory(directory, filename, as_attachment=True)
 

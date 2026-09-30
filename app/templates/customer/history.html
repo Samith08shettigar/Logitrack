@@ -234,7 +234,7 @@
                             <td>
                                 <div class="d-flex align-items-center gap-2">
                                     {% if sh.package_image_path %}
-                                        <img src="{{ url_for('static', filename=sh.package_image_path) }}" alt="Cargo" class="rounded border shadow-sm" style="width: 38px; height: 38px; object-fit: cover; cursor: pointer;" onclick="showImageModal('{{ url_for('static', filename=sh.package_image_path) }}', '{{ sh.tracking_number }}')" title="Click to view product photo">
+                                        <img src="{{ url_for('static', filename=sh.package_image_path) }}" alt="Cargo" class="rounded border shadow-sm" style="width: 38px; height: 38px; object-fit: cover; cursor: pointer;" onclick="showImageModal(this.src, '{{ sh.tracking_number }}')" title="Click to view product photo" onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/cargo_placeholder.svg') }}';">
                                     {% else %}
                                         <div class="bg-light rounded border d-flex align-items-center justify-content-center text-muted" style="width: 38px; height: 38px;">
                                             <i class="fa-solid fa-box"></i>

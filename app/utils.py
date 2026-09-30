@@ -332,6 +332,38 @@ def generate_barcode_img(tracking_number):
     barcode_instance.save(filepath) # Automatically appends .png extension
     return f"uploads/barcodes/{filename}.png"
 
+def ensure_shipment_media(shipment):
+    """
+    Ensures barcode and QR code images exist on disk for a shipment.
+    Regenerates them automatically on-the-fly if missing or wiped on ephemeral cloud container restart.
+    """
+    if not shipment or not shipment.tracking_number:
+        return
+        
+    upload_folder = current_app.config.get('UPLOAD_FOLDER', os.path.join(current_app.root_path, 'static', 'uploads'))
+    os.makedirs(os.path.join(upload_folder, 'qrcodes'), exist_ok=True)
+    os.makedirs(os.path.join(upload_folder, 'barcodes'), exist_ok=True)
+    os.makedirs(os.path.join(upload_folder, 'invoices'), exist_ok=True)
+    os.makedirs(os.path.join(upload_folder, 'products'), exist_ok=True)
+    
+    # 1. QR Code
+    qr_filename = f"{shipment.tracking_number}.png"
+    qr_filepath = os.path.join(upload_folder, 'qrcodes', qr_filename)
+    if not os.path.exists(qr_filepath) or not shipment.qr_code_path:
+        try:
+            shipment.qr_code_path = generate_qr_code(shipment.tracking_number)
+        except Exception:
+            pass
+            
+    # 2. Barcode
+    barcode_filename = f"{shipment.tracking_number}.png"
+    barcode_filepath = os.path.join(upload_folder, 'barcodes', barcode_filename)
+    if not os.path.exists(barcode_filepath) or not shipment.barcode_path:
+        try:
+            shipment.barcode_path = generate_barcode_img(shipment.tracking_number)
+        except Exception:
+            pass
+
 # 4. Rupees to Words Helper
 def number_to_words(num):
     num = int(round(num))

@@ -7,7 +7,7 @@ from app.models import (
     db, Driver, Shipment, ShipmentHistory, TrackingLog, Vehicle,
     ContainerTransfer, User, Branch, Payment, Invoice
 )
-from app.utils import login_required, role_required, log_activity, create_notification
+from app.utils import login_required, role_required, log_activity, create_notification, ensure_shipment_media
 from . import driver_bp
 
 @driver_bp.route('/dashboard')
@@ -283,6 +283,12 @@ def delivery_detail(id):
     if not shipment:
         flash("Shipment not found or already completed/returned to warehouse.", "info")
         return redirect(url_for('driver.dashboard'))
+        
+    ensure_shipment_media(shipment)
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
         
     if request.method == 'POST':
         new_status = request.form.get('status')

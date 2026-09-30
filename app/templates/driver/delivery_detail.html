@@ -116,12 +116,13 @@
                 <div class="col-6">
                     <strong class="text-secondary d-block">Product Image</strong>
                     {% if shipment.package_image_path %}
-                        <a href="#" data-bs-toggle="modal" data-bs-target="#imagePreviewModal" onclick="document.getElementById('modalPreviewImg').src='{{ url_for('static', filename=shipment.package_image_path) }}'; return false;" title="Tap to expand">
-                            <img src="{{ url_for('static', filename=shipment.package_image_path) }}" alt="Product Image" class="img-thumbnail mt-1" style="max-height: 80px; object-fit: cover; cursor: pointer;">
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#imagePreviewModal" onclick="document.getElementById('modalPreviewImg').src=document.getElementById('driver-prod-img').src; return false;" title="Tap to expand">
+                            <img id="driver-prod-img" src="{{ url_for('static', filename=shipment.package_image_path) }}" alt="Product Image" class="img-thumbnail mt-1" style="max-height: 80px; width: 80px; object-fit: cover; cursor: pointer;" onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/cargo_placeholder.svg') }}';">
                         </a>
                         <small class="text-muted d-block mt-1" style="font-size: 0.65rem;"><i class="fa-solid fa-magnifying-glass-plus me-1"></i>Tap to zoom</small>
                     {% else %}
-                        <span class="text-muted"><i class="fa-solid fa-triangle-exclamation me-1 text-warning"></i>No Product Image</span>
+                        <img src="{{ url_for('static', filename='images/cargo_placeholder.svg') }}" alt="Cargo Package" class="img-thumbnail mt-1" style="max-height: 80px; width: 80px; object-fit: cover;">
+                        <small class="text-muted d-block mt-1" style="font-size: 0.65rem;">Standard Package</small>
                     {% endif %}
                 </div>
             </div>
@@ -353,7 +354,7 @@
                                     <p class="text-muted mb-1" style="font-size: 0.78rem;">
                                         Collect physical cash of <b class="text-dark" id="cash-mode-amount">₹{{ balance_due }}</b> from sender upon pickup.
                                     </p>
-                                    <div class="badge bg-warning text-dark border border-warning" style="font-size: 0.7rem;">
+                                    <div class="badge bg-warning text-dark border border-warning text-wrap text-start lh-sm d-inline-block mt-1 p-2" style="font-size: 0.72rem; white-space: normal !important; max-width: 100%;">
                                         <i class="fa-solid fa-shield-halved me-1"></i>Custody Notice: Cash must be deposited with Branch Manager at warehouse
                                     </div>
                                 </div>

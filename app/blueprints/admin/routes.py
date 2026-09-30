@@ -6,7 +6,7 @@ from flask import render_template, request, redirect, url_for, flash, g, make_re
 from sqlalchemy import func
 import pandas as pd
 from app.models import db, User, Role, Customer, Driver, Branch, Vehicle, Shipment, ShipmentHistory, TrackingLog, Payment, Invoice, Feedback, Setting, ActivityLog
-from app.utils import login_required, role_required, log_activity, create_notification, calculate_shipping_cost, generate_qr_code, generate_barcode_img, create_invoice_pdf, validate_email_domain, validate_password, validate_phone
+from app.utils import login_required, role_required, log_activity, create_notification, calculate_shipping_cost, generate_qr_code, generate_barcode_img, create_invoice_pdf, validate_email_domain, validate_password, validate_phone, ensure_shipment_media
 from . import admin_bp
 
 @admin_bp.route('/dashboard')
@@ -908,6 +908,12 @@ def edit_shipment(id):
     if not shipment:
         flash("Shipment not found.", "danger")
         return redirect(url_for('admin.list_shipments'))
+        
+    ensure_shipment_media(shipment)
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
         
     branches = Branch.query.all()
     drivers = Driver.query.all()

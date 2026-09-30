@@ -186,12 +186,8 @@
                             <div class="card p-3 border-0 bg-light">
                                 <h6 class="fw-bold text-primary mb-2">Billing & QR Logs</h6>
                                 <div class="d-flex align-items-center gap-3">
-                                    {% if shipment.qr_code_path %}
-                                    <img src="{{ url_for('static', filename=shipment.qr_code_path) }}" alt="QR Code" style="width: 80px; height: 80px;" class="border rounded bg-white p-1">
-                                    {% endif %}
-                                    {% if shipment.barcode_path %}
-                                    <img src="{{ url_for('static', filename=shipment.barcode_path) }}" alt="Barcode" style="width: 140px; height: 50px;" class="border rounded bg-white p-1">
-                                    {% endif %}
+                                    <img src="{% if shipment.qr_code_path %}{{ url_for('static', filename=shipment.qr_code_path) }}{% else %}https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ shipment.tracking_number }}{% endif %}" alt="QR Code" style="width: 80px; height: 80px;" class="border rounded bg-white p-1" onerror="this.onerror=null; this.src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ shipment.tracking_number }}';">
+                                    <img src="{% if shipment.barcode_path %}{{ url_for('static', filename=shipment.barcode_path) }}{% else %}https://barcodeapi.org/api/128/{{ shipment.tracking_number }}{% endif %}" alt="Barcode" style="width: 140px; height: 50px;" class="border rounded bg-white p-1" onerror="this.onerror=null; this.src='https://barcodeapi.org/api/128/{{ shipment.tracking_number }}';">
                                 </div>
                             </div>
                         </div>

@@ -845,27 +845,23 @@
             </div>
             
             <div class="mt-4 d-flex flex-wrap justify-content-center align-items-end gap-3">
-                {% if shipment.package_image_path %}
                 <div class="text-center">
                     <small class="text-muted d-block mb-1">Product Image</small>
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imagePreviewModal" onclick="document.getElementById('modalPreviewImg').src='{{ url_for('static', filename=shipment.package_image_path) }}'; return false;" title="Tap to expand">
-                        <img src="{{ url_for('static', filename=shipment.package_image_path) }}" alt="Product Image" style="width: 90px; height: 90px; object-fit: cover; cursor: pointer;" class="border rounded bg-white p-1 shadow-sm">
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#imagePreviewModal" onclick="document.getElementById('modalPreviewImg').src=document.getElementById('track-prod-img').src; return false;" title="Tap to expand">
+                        <img id="track-prod-img" src="{% if shipment.package_image_path %}{{ url_for('static', filename=shipment.package_image_path) }}{% else %}{{ url_for('static', filename='images/cargo_placeholder.svg') }}{% endif %}" alt="Product Image" style="width: 90px; height: 90px; object-fit: cover; cursor: pointer;" class="border rounded bg-white p-1 shadow-sm" onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/cargo_placeholder.svg') }}';">
                     </a>
                 </div>
-                {% endif %}
-                {% if shipment.qr_code_path %}
+                
                 <div class="text-center">
                     <small class="text-muted d-block mb-1">Receipt QR Code</small>
-                    <img src="{{ url_for('static', filename=shipment.qr_code_path) }}" alt="QR Code" style="width: 90px; height: 90px;" class="border rounded bg-white p-1 shadow-sm">
+                    <img src="{% if shipment.qr_code_path %}{{ url_for('static', filename=shipment.qr_code_path) }}{% else %}https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ shipment.tracking_number }}{% endif %}" alt="QR Code" style="width: 90px; height: 90px;" class="border rounded bg-white p-1 shadow-sm" onerror="this.onerror=null; this.src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ shipment.tracking_number }}';">
                 </div>
-                {% endif %}
-                {% if shipment.barcode_path %}
+                
                 <div class="text-center">
                     <small class="text-muted d-block mb-1">Container Barcode</small>
-                    <img src="{{ url_for('static', filename=shipment.barcode_path) }}" alt="Barcode" style="max-width: 170px; width: 100%; height: auto; min-height: 48px;" class="border rounded bg-white p-1 shadow-sm">
+                    <img src="{% if shipment.barcode_path %}{{ url_for('static', filename=shipment.barcode_path) }}{% else %}https://barcodeapi.org/api/128/{{ shipment.tracking_number }}{% endif %}" alt="Barcode" style="max-width: 170px; width: 100%; height: auto; min-height: 48px;" class="border rounded bg-white p-1 shadow-sm" onerror="this.onerror=null; this.src='https://barcodeapi.org/api/128/{{ shipment.tracking_number }}';">
                     <a href="{{ url_for('customer.download_invoice', tracking_number=shipment.tracking_number) }}" class="btn btn-outline-secondary btn-sm d-block mt-2 fw-bold"><i class="fa-solid fa-file-pdf me-1"></i>Download PDF Invoice</a>
                 </div>
-                {% endif %}
             </div>
             
             {% if shipment.status in ['Booked', 'Payment Pending', 'Confirmed', 'Branch Assigned'] %}

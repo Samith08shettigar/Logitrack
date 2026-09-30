@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="boxTop" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <linearGradient id="boxLeft" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+    <linearGradient id="boxRight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#b45309"/>
+      <stop offset="100%" stop-color="#92400e"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Rounded Background -->
+  <rect width="300" height="300" rx="20" fill="url(#bgGrad)"/>
+  <rect x="2" y="2" width="296" height="296" rx="18" fill="none" stroke="rgba(245, 158, 11, 0.2)" stroke-width="2"/>
+  
+  <!-- 3D Isometric Cargo Box -->
+  <g transform="translate(150, 130)">
+    <!-- Top Face -->
+    <polygon points="0,-45 55,-15 0,15 -55,-15" fill="url(#boxTop)"/>
+    <!-- Left Face -->
+    <polygon points="-55,-15 0,15 0,75 -55,45" fill="url(#boxLeft)"/>
+    <!-- Right Face -->
+    <polygon points="0,15 55,-15 55,45 0,75" fill="url(#boxRight)"/>
+    <!-- Tape / Ribbon -->
+    <polygon points="-5,-42 5,-37 5,18 -5,13" fill="#ffffff" opacity="0.8"/>
+    <polygon points="-5,13 5,18 5,78 -5,73" fill="#ffffff" opacity="0.8"/>
+    <polygon points="-28,-30 28,1 -28,32 -28,32" fill="#ffffff" opacity="0.15"/>
+  </g>
+  
+  <!-- LogiTrack Label -->
+  <text x="150" y="235" font-family="'Outfit', 'Inter', -apple-system, sans-serif" font-weight="700" font-size="16" fill="#fbbf24" text-anchor="middle" letter-spacing="1">LOGITRACK CARGO</text>
+  <text x="150" y="258" font-family="'Inter', -apple-system, sans-serif" font-weight="500" font-size="12" fill="#94a3b8" text-anchor="middle">Standard Freight Parcel</text>
+</svg>

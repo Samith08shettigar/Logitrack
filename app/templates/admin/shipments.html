@@ -53,8 +53,8 @@
                             <td>
                                 <div class="d-flex align-items-center gap-2">
                                     {% if sh.package_image_path %}
-                                        <a href="#" data-bs-toggle="modal" data-bs-target="#imagePreviewModal" onclick="document.getElementById('modalPreviewImg').src='{{ url_for('static', filename=sh.package_image_path) }}'; return false;" title="Tap to zoom">
-                                            <img src="{{ url_for('static', filename=sh.package_image_path) }}" alt="Package" class="rounded border" style="width: 32px; height: 32px; object-fit: cover; cursor: pointer;">
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#imagePreviewModal" onclick="document.getElementById('modalPreviewImg').src=this.querySelector('img').src; return false;" title="Tap to zoom">
+                                            <img src="{{ url_for('static', filename=sh.package_image_path) }}" alt="Package" class="rounded border" style="width: 32px; height: 32px; object-fit: cover; cursor: pointer;" onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/cargo_placeholder.svg') }}';">
                                         </a>
                                     {% else %}
                                         <div class="rounded bg-light border d-flex align-items-center justify-content-center text-muted" style="width: 32px; height: 32px; font-size: 0.65rem;">
