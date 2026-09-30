@@ -377,7 +377,7 @@
         <div class="offcanvas-body d-flex flex-column justify-content-between p-3">
             <div>
                 <!-- Live Network Status Pill -->
-                <div class="p-2 mb-3 rounded-3 bg-white bg-opacity-5 border border-white border-opacity-10 d-flex align-items-center justify-content-between">
+                <div class="p-2 mb-3 rounded-3 d-flex align-items-center justify-content-between" style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.1);">
                     <div class="d-flex align-items-center gap-2">
                         <span class="pulse-dot"></span>
                         <small class="text-white-50 fw-bold" style="font-size: 0.72rem;">LOGISTICS NETWORK</small>
@@ -387,7 +387,7 @@
 
                 <!-- Navigation Tiles -->
                 <div class="mb-4">
-                    <a href="/" class="nav-tile" data-bs-dismiss="offcanvas">
+                    <a href="/" class="nav-tile">
                         <div class="nav-tile-icon bg-primary bg-opacity-25 text-primary">
                             <i class="fa-solid fa-house"></i>
                         </div>
@@ -397,7 +397,7 @@
                         </div>
                     </a>
 
-                    <a href="{{ url_for('customer.public_track') }}" class="nav-tile" data-bs-dismiss="offcanvas">
+                    <a href="{{ url_for('customer.public_track') }}" class="nav-tile">
                         <div class="nav-tile-icon bg-warning bg-opacity-25 text-warning">
                             <i class="fa-solid fa-magnifying-glass-location"></i>
                         </div>
@@ -407,29 +407,14 @@
                         </div>
                     </a>
                 </div>
-
-                <!-- Access Portals Group -->
-                <div class="mb-3">
-                    <span class="text-white-50 small fw-bold d-block mb-2 px-1" style="font-size: 0.72rem; letter-spacing: 0.5px;">ACCOUNT ACCESS</span>
-                    <a href="{{ url_for('auth.login') }}" class="nav-tile mb-2" data-bs-dismiss="offcanvas">
-                        <div class="nav-tile-icon bg-info bg-opacity-25 text-info">
-                            <i class="fa-solid fa-circle-user"></i>
-                        </div>
-                        <div class="flex-grow-1">
-                            <div class="fw-bold small text-white">Client & Staff Sign In</div>
-                            <small class="text-white-50" style="font-size: 0.72rem;">Access your dashboard</small>
-                        </div>
-                        <i class="fa-solid fa-arrow-right text-white-50 small"></i>
-                    </a>
-                </div>
             </div>
 
             <!-- Bottom Action CTA Buttons -->
             <div class="pt-3 border-top border-white border-opacity-10">
-                <a href="{{ url_for('auth.register') }}" class="btn-gradient-pill w-100 py-2 mb-2 justify-content-center shadow-lg" data-bs-dismiss="offcanvas">
+                <a href="{{ url_for('auth.register') }}" class="btn-gradient-pill w-100 py-2 mb-2 justify-content-center shadow-lg">
                     <i class="fa-solid fa-rocket me-1"></i> Create Free Account
                 </a>
-                <a href="{{ url_for('auth.login') }}" class="btn-glass-pill w-100 py-2 justify-content-center" data-bs-dismiss="offcanvas">
+                <a href="{{ url_for('auth.login') }}" class="btn-glass-pill w-100 py-2 justify-content-center">
                     <i class="fa-solid fa-right-to-bracket text-warning me-1"></i> Existing User Login
                 </a>
                 <div class="text-center mt-3">
